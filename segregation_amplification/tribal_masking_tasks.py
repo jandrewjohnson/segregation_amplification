@@ -49,9 +49,9 @@ def aspatial_externality_game(p):
         init = {'d': [-10, 10, -.5, 1], 's': [0, 1, .5, .1], 'r': [-10, 10, 1.0, 1]}
         for i in range(n_agents):
             agents[i] = {}
-            agents[i]['parameters'] = {'d': sp.stats.truncnorm.rvs((init['d'][0] - init['d'][2]) / init['d'][3], (init['d'][1] - init['d'][2]) / init['d'][3], loc=init['d'][2], scale=init['d'][3])[0], 
-                                       's': sp.stats.truncnorm.rvs((init['s'][0] - init['s'][2]) / init['s'][3], (init['s'][1] - init['s'][2]) / init['s'][3], loc=init['s'][2], scale=init['s'][3])[0],
-                                       'r': sp.stats.truncnorm.rvs((init['r'][0] - init['r'][2]) / init['r'][3], (init['r'][1] - init['r'][2]) / init['r'][3], loc=init['r'][2], scale=init['r'][3])[0]}
+            agents[i]['parameters'] = {'d': sp.stats.truncnorm.rvs((init['d'][0] - init['d'][2]) / init['d'][3], (init['d'][1] - init['d'][2]) / init['d'][3], loc=init['d'][2], scale=init['d'][3]),
+                                       's': sp.stats.truncnorm.rvs((init['s'][0] - init['s'][2]) / init['s'][3], (init['s'][1] - init['s'][2]) / init['s'][3], loc=init['s'][2], scale=init['s'][3]),
+                                       'r': sp.stats.truncnorm.rvs((init['r'][0] - init['r'][2]) / init['r'][3], (init['r'][1] - init['r'][2]) / init['r'][3], loc=init['r'][2], scale=init['r'][3])}
 
         # Make choice
         for i in range(n_agents):
@@ -92,9 +92,9 @@ def aspatial_externality_game(p):
                     init = {'d': [-10, 10, -.5 + j, .25], 's': [0, 1, .5, .1], 'r': [-10, 10, 1.0 + k, .25]}
                     for i in range(n_agents):
                         agents[i] = {}
-                        agents[i]['parameters'] = {'d': sp.stats.truncnorm.rvs((init['d'][0] - init['d'][2]) / init['d'][3], (init['d'][1] - init['d'][2]) / init['d'][3], loc=init['d'][2], scale=init['d'][3])[0], 
-                                                's': sp.stats.truncnorm.rvs((init['s'][0] - init['s'][2]) / init['s'][3], (init['s'][1] - init['s'][2]) / init['s'][3], loc=init['s'][2], scale=init['s'][3])[0],
-                                                'r': sp.stats.truncnorm.rvs((init['r'][0] - init['r'][2]) / init['r'][3], (init['r'][1] - init['r'][2]) / init['r'][3], loc=init['r'][2], scale=init['r'][3])[0]}
+                        agents[i]['parameters'] = {'d': sp.stats.truncnorm.rvs((init['d'][0] - init['d'][2]) / init['d'][3], (init['d'][1] - init['d'][2]) / init['d'][3], loc=init['d'][2], scale=init['d'][3]),
+                                                's': sp.stats.truncnorm.rvs((init['s'][0] - init['s'][2]) / init['s'][3], (init['s'][1] - init['s'][2]) / init['s'][3], loc=init['s'][2], scale=init['s'][3]),
+                                                'r': sp.stats.truncnorm.rvs((init['r'][0] - init['r'][2]) / init['r'][3], (init['r'][1] - init['r'][2]) / init['r'][3], loc=init['r'][2], scale=init['r'][3])}
 
                     # Make choice for this point
                     for i in range(n_agents):
@@ -166,7 +166,7 @@ def spatial_externality_game(p):
         r_initial = a.reshape(shape).astype(np.float32)
 
 
-        spatial_result = computational_core.spatial_externality_game(b_initial, s_initial, r_initial)
+        spatial_result = tribal_masking_computational_core.spatial_externality_game(b_initial, s_initial, r_initial)
         spatial_result = np.asarray(spatial_result)
 
 
@@ -256,7 +256,7 @@ def spatial_segregation_game(p):
 
             # hb.show(types_map)
             hb.timer('starting cython')
-            computational_core.spatial_segregation_game(agent_ids, agent_locations, unoccupied_locations, agent_types, agent_ids_map,
+            tribal_masking_computational_core.spatial_segregation_game(agent_ids, agent_locations, unoccupied_locations, agent_types, agent_ids_map,
                                                                        types_map, threshold=threshold, game_type=game_type, reporting_threshold=1)
             hb.timer('Initial run of spatial_segregation_game took:')
             if do_animation:
@@ -265,7 +265,7 @@ def spatial_segregation_game(p):
 
             previous_n_changed = 0
             for i in range(333):
-                n_changed = computational_core.spatial_segregation_game(agent_ids, agent_locations, unoccupied_locations, agent_types, agent_ids_map,
+                n_changed = tribal_masking_computational_core.spatial_segregation_game(agent_ids, agent_locations, unoccupied_locations, agent_types, agent_ids_map,
                                                                                        types_map, threshold=threshold, game_type=game_type, reporting_threshold=1)
                 if n_changed <= 0:
                     break
@@ -350,7 +350,7 @@ def combined_game_noninteractive(p):
         for i in range(n_iterations):
 
             # CALCULATE THE ACTUAL GAME.
-            n_changed = computational_core.spatial_segregation_externality_game(
+            n_changed = tribal_masking_computational_core.spatial_segregation_externality_game(
                 agent_ids, agent_locations, unoccupied_locations, agent_types, agent_ids_map,
                 types_map, threshold, neighborhood_radius, game_type,
                 d, s, r, masking_choice, average_reciprocal_response_from_masking, mean_metric_map,
@@ -383,7 +383,7 @@ def combined_game_noninteractive(p):
                     im = ax.imshow(to_plot_dict[name][c], interpolation='nearest')
                     ims.append([im])
                 ani = matplotlib.animation.ArtistAnimation(fig, ims, interval=50, blit=True, repeat_delay=1)
-                ani.save(os.path.join(p.cur_dir, name + '_animation.mp4'), fps=6, writer='ffmpeg', dpi=150, bitrate=-1)
+                ani.save(os.path.join(p.cur_dir, name + '_animation.gif'), fps=6, dpi=150, bitrate=-1)
 
 def combined_game_interactive_full_resolve(p):
 
