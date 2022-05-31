@@ -12,7 +12,7 @@ import tribal_masking_functions
 import tribal_masking_computational_core
 import tribal_masking_tasks
 
-# matplotlib.use('Qt5Agg')  # or can use 'TkAgg', whatever you have/prefer or Qt5Agg
+matplotlib.use('Qt5Agg')  # or can use 'TkAgg', whatever you have/prefer or Qt5Agg
 
 
 

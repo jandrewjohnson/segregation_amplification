@@ -19,15 +19,15 @@ test_different_data_models_performance_task = p.add_task(tribal_masking_tasks.te
 combined_game_with_policies_task = p.add_task(tribal_masking_tasks.combined_game_with_policies)
 combined_game_with_policies_and_infection_task = p.add_task(tribal_masking_tasks.combined_game_with_policies_and_infection)
 
-aspatial_externality_game_task.run = 1
-spatial_externality_game_task.run = 1
-spatial_segregation_game_task.run = 1
-combined_game_noninteractive_task.run = 1
-combined_game_interactive_full_resolve_task.run = 1
-combined_game_interactive_time_variant_task.run = 1
+aspatial_externality_game_task.run = 0
+spatial_externality_game_task.run = 0
+spatial_segregation_game_task.run = 0
+combined_game_noninteractive_task.run = 0
+combined_game_interactive_full_resolve_task.run = 0
+combined_game_interactive_time_variant_task.run = 0
 test_different_data_models_performance_task.run = 1
 combined_game_with_policies_task.run = 1
-combined_game_with_policies_and_infection_task.run = 1
+combined_game_with_policies_and_infection_task.run = 0
 
 aspatial_externality_game_task.skip_existing = 0
 spatial_externality_game_task.skip_existing = 0

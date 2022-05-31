@@ -174,7 +174,10 @@ def spatial_externality_game(p):
 
 
 def spatial_segregation_game(p):
-    """Combine the models and generate static outputs and/or animations."""
+    """Combine the models and generate static outputs and/or animations.
+    Outputs animated gifs of the game for both the leave-dissimilar and leave insufficient similar versions.
+    Slow beacuse it saves the state of the game at each time step to a list of arrays for future plotting.
+    ONLY does the segregation game. no spatial externality."""
 
     p.spatial_segregation_game_animation_paths = {}
     p.spatial_segregation_game_animation_paths['segregation_game_no_convergence'] = os.path.join(p.cur_dir, 'segregation_game_no_convergence.gif')
@@ -292,7 +295,8 @@ def spatial_segregation_game(p):
                 anim.save(animation_path)
 
 def combined_game_noninteractive(p):
-    """Produce animations for the combined game."""
+    """Produce animations for the combined game but in a non-interactive setting.
+    May be useful for creating manuscript figures of line plots over time."""
 
     p.combined_game_animation_path = os.path.join(p.cur_dir, 'combined_game_animation.gif')
 
@@ -386,7 +390,9 @@ def combined_game_noninteractive(p):
                 ani.save(os.path.join(p.cur_dir, name + '_animation.gif'), fps=6, dpi=150, bitrate=-1)
 
 def combined_game_interactive_full_resolve(p):
-
+    """Launch an interactive matplotlib interface to run the combined game. Whenever a parameter is changed, it fully resolves the model, meaning it re-randomizes
+    agent locations and determines a new spatial equilibrium. Not very realistic for this reason, but possibly useful to scan possible equilibrium outcomes over
+    different parameter ranges."""
     p.combined_game_animation_path = os.path.join(p.cur_dir, hb.ruri('combined_game_animation.gif'))
 
     if p.run_this:
@@ -436,11 +442,11 @@ def combined_game_interactive_full_resolve(p):
 
 def combined_game_interactive_time_variant(p):
     """This was an aborted attempt to make it solve with time-steps, but I decided it was too complex and needed
-    to go object oriented"""
+    to go object oriented. I can't tell how this is different from the full_resolve verison. Launches interactive MPL interface."""
     if p.run_this:
 
         # Define the size of the societal space
-        spatial_shape = (50, 100)
+        spatial_shape = (50, 50)
 
         # In order to allow agents to be able to move, the segregation game has some portion of the initial "houses" unoccupied. Set the proportion filled here.
         proportion_filled = .75
@@ -487,7 +493,9 @@ def combined_game_interactive_time_variant(p):
 
 
 def test_different_data_models_performance(p):
-
+    """As noted above, the paradigm where i submitted a set of initialization arrays to a cython function and returned back the next time-state worked
+    but was incurring too much complexity overhead. Here I test the old approach with a new object-oriented aproach, which became the preferred model for
+    development.  """
     if p.run_this:
 
         # Define the size of the societal space
@@ -558,15 +566,16 @@ def combined_game_with_policies(p):
 
     if p.run_this:
 
-        model = tribal_masking_functions.tribal_masking_model((50, 100))
+        model = tribal_masking_functions.tribal_masking_model((100, 100))
 
         tribal_masking_visualization.plot_combined_game_interactive_sliders(model)
 
 def combined_game_with_policies_and_infection(p):
 
     if p.run_this:
-
-        model = tribal_masking_functions.tribal_masking_model((50, 100))
+        # START HERE: Consider having additional plotting functions that incorporate line graphs over time, export to CSV, export to gif, and
+        # run just a single step.
+        model = tribal_masking_functions.tribal_masking_model((100, 100))
 
         tribal_masking_visualization.plot_combined_game_interactive_infections(model)
 
