@@ -10,6 +10,7 @@ import hazelbean as hb
 
 
 import tribal_masking_computational_core
+import collections
 
 class tribal_masking_model(object):
 
@@ -26,9 +27,12 @@ class tribal_masking_model(object):
 
 
         self.initial_params = {
-            'segregation_threshold': 0.2,
+            'segregation_threshold': 0.55,
             'neighborhood_radius': 3,
-            'infection_probability':0.03,
+            'infection_probability': 0.005,
+            'masking_efficacy': 0.35,
+            'infection_duration': 10,
+            'immunity_decay': .99,
             'd': -0.25,
             'dd': 0.0000001,
             's': 1.0,
@@ -38,6 +42,19 @@ class tribal_masking_model(object):
             'b': -0.1,
             'bd': .0000001,
         }
+
+        # amplitudes = {
+        #                  Status.Susceptible: 10,
+        #                  Status.Recovered_Immune: 10,
+        #                  Status.Infected: 10
+        #              },
+
+        # Epidemiological
+        critical_limit = 0.01,
+        contagion_rate = .9,
+        incubation_time = 5,
+        contagion_time = 10,
+        recovering_time = 20,
 
         # Uncertainty turned out not to matter much, so simplifying it away from the UI is clean. It will still use the default values however, just not plot changes to them.
         self.show_uncertainty_sliders = False
@@ -49,6 +66,8 @@ class tribal_masking_model(object):
         self.initialize_agents()
 
         self.initialize_choice_variables()
+
+        self.initialize_reporting_variables()
 
     def initialize_agents(self):
 
@@ -153,9 +172,17 @@ class tribal_masking_model(object):
         self.parameter_maps['r'] = np.where(self.types_map == 2, self.parameter_maps['r'] * self.parameter_maps['b'], self.parameter_maps['r'])
 
         self.parameter_maps['average_reciprocal_response_from_masking'] = np.zeros(self.spatial_shape, dtype=np.float32)
+        # self.parameter_maps['immunity_status'] = np.zeros(self.spatial_shape, dtype=np.float32)
+
     def initialize_choice_variables(self):
         self.masking_choice = np.zeros(self.spatial_shape, dtype=np.float32)
         self.infection_status = np.zeros(self.spatial_shape, dtype=np.float32)
+        self.immunity_status = np.zeros(self.spatial_shape, dtype=np.float32)
+        self.immunity_efficacy = np.zeros(self.spatial_shape, dtype=np.float32)
+
+    def initialize_reporting_variables(self):
+        self.infection_status_last_100 = [0.0] * 100
+        self.masking_choice_last_100 = [0.0] * 100
 
     def get_truncated_normal_parameter_map(self, min, max, mean, std, spatial_shape, agent_ids_map):
         a = sp.stats.truncnorm.rvs((min - mean) / std, (max - mean) / std, loc=mean, scale=std, size=spatial_shape[0] * spatial_shape[1])
@@ -164,194 +191,6 @@ class tribal_masking_model(object):
 
 
 
-
-def initialize_agents(spatial_shape, proportion_filled, type_bias, params):
-    ### INITIALIZATION
-    # Save row and col ids as two new parameters so that we can quickly look up paraeters my spatial location OR agent id.
-    row_ids = np.arange(spatial_shape[0])
-    col_ids = np.arange(spatial_shape[1])
-
-    # Number of agents is a function then of the size of the space and the proportion filled, rounded down and inted.
-    n_agents = int(np.floor(spatial_shape[0] * spatial_shape[1] * proportion_filled))
-    n_cells = spatial_shape[0] * spatial_shape[1]
-
-    # Keep track of all the agents via IDs
-    agent_ids = np.arange(0, n_agents).astype(np.int)
-
-    # positional_indices records the 2-length r, c of each agent grid-cell based on their r, c.
-    positional_indices = np.empty((spatial_shape[0], spatial_shape[1], 2), dtype=int)
-    positional_indices[:, :, 0] = row_ids[:, None]
-    positional_indices[:, :, 1] = col_ids
-
-    # Somewhat convoluted way of randomizing the initial postitions.
-    shuffled_positional_indices = np.copy(positional_indices)  # Operate on a copy to keep original
-
-    # Shuffle requires a flattened array, so reshape it from 3d to 2d, keeping the 2d r-c indices.
-    new_shape = (shuffled_positional_indices.shape[0] * shuffled_positional_indices.shape[1], shuffled_positional_indices.shape[2])
-    shuffled_positional_indices = shuffled_positional_indices.reshape(new_shape)
-
-    # Randomize the order by creating a randomized list of r-c indices for future fast iterating.
-    # LEARNING POINT, this was the most efficient approach I could think of for shuffling in the first 2 of three directions while keeping the third intact.
-    rng = np.random.default_rng()
-    rng.shuffle(shuffled_positional_indices, axis=0)
-
-    # First initialize all agents_list on a random location according to the initial shuffled queue.
-    agent_locations = shuffled_positional_indices[:n_agents]
-
-    # Also initialize the unoccupied locations. When agents move, the grab a new spot from this list and move their previous slot into this array.
-    unoccupied_locations = shuffled_positional_indices[n_agents:]
-
-    # Agent types are 1 = liberal, 2 = conservative. 0 is left blank to reflect absence of agents.
-    agent_types = np.random.randint(1, 3, size=n_agents).astype(np.int)
-
-    # agent ids and types are initialized as maps.
-    agent_ids_map = np.zeros((spatial_shape[0], spatial_shape[1]), dtype=np.int)
-    types_map = np.zeros((spatial_shape[0], spatial_shape[1]), dtype=np.int)
-    for i in range(n_agents):
-        agent_ids_map[shuffled_positional_indices[i, 0], shuffled_positional_indices[i, 1]] = i
-        types_map[shuffled_positional_indices[i, 0], shuffled_positional_indices[i, 1]] = agent_types[i]
-
-    # hb.show(types_map)
-    a = sp.stats.truncnorm.rvs((params['d'][0] - params['d'][2]) / params['d'][3], (params['d'][1] - params['d'][2]) / params['d'][3], loc=params['d'][2], scale=params['d'][3], size=n_cells)
-    a = np.where(agent_ids_map.flatten() > 0, a, 0.)
-    d_params = a.reshape(spatial_shape).astype(np.float32)
-    d = np.copy(d_params)
-
-    a = sp.stats.truncnorm.rvs((params['s'][0] - params['s'][2]) / params['s'][3], (params['s'][1] - params['s'][2]) / params['s'][3], loc=params['s'][2], scale=params['s'][3], size=n_cells)
-    a = np.where(agent_ids_map.flatten() > 0, a, 0.)
-    s_params = a.reshape(spatial_shape).astype(np.float32)
-    s = np.copy(s_params)
-
-    a = sp.stats.truncnorm.rvs((params['r'][0] - params['r'][2]) / params['r'][3], (params['r'][1] - params['r'][2]) / params['r'][3], loc=params['r'][2], scale=params['r'][3], size=n_cells)
-    a = np.where(agent_ids_map.flatten() > 0, a, 0.)
-    add_type_corellation = 1
-    if add_type_corellation:
-        a = np.where(types_map.flatten() == 2, a * type_bias, a)
-    r_initial = a.reshape(spatial_shape).astype(np.float32)
-    r = np.copy(r_initial)
-
-    return agent_ids, agent_locations, unoccupied_locations, agent_types, agent_ids_map, types_map, d, s, r
-
-
-def get_masking_choice_full_resolve(spatial_shape, proportion_filled, game_type, threshold, neighborhood_radius, type_bias, d_param, dd_param, s_param, sd_param, r_param, rd_param):
-    # For convenience, we define input parameters here via a dictionary.
-    params = {'d': [-10, 10, d_param, dd_param], 's': [0, 1, s_param, sd_param], 'r': [-10, 10, r_param, rd_param]}
-    # params = {'d': [-10, 10, -.25, .05], 's': [0, 1, 0.9, .1], 'r': [-10, 10, 1.0, 1.95]}
-    masking_choice = np.zeros(spatial_shape).astype(np.float32)
-    mean_metric_map = np.zeros(spatial_shape).astype(np.float32)
-    average_reciprocal_response_from_masking = np.zeros(spatial_shape).astype(np.float32)
-    agent_ids, agent_locations, unoccupied_locations, agent_types, agent_ids_map, types_map, d, s, r = \
-        initialize_agents(spatial_shape, proportion_filled, type_bias, params)
-    neighborhood_radius = np.int(neighborhood_radius)
-    n_iterations = 150
-    for i in range(n_iterations):
-
-        n_changed = tribal_masking_computational_core.spatial_segregation_externality_game(
-            agent_ids, agent_locations, unoccupied_locations, agent_types, agent_ids_map,
-            types_map, threshold, neighborhood_radius, game_type,
-            d, s, r, masking_choice, average_reciprocal_response_from_masking, mean_metric_map,
-            reporting_threshold=0)
-        # End early if few agents move locations.
-        min_changers_to_end = 1
-        if n_changed <= min_changers_to_end:
-            break
-
-    return np.copy(np.asarray(masking_choice)), np.copy(np.asarray(types_map)), np.copy(np.asarray(mean_metric_map)), np.copy(np.asarray(average_reciprocal_response_from_masking))
-
-def get_initial_masking_choice_time_variant(threshold, spatial_shape, proportion_filled, n_iterations, game_type, neighborhood_radius, type_bias, d_param, dd_param, s_param, sd_param, r_param, rd_param):
-    # For convenience, we define input parameters here via a dictionary.
-    params = {'d': [-10, 10, d_param, dd_param], 's': [0, 1, s_param, sd_param], 'r': [-10, 10, r_param, rd_param]}
-    # params = {'d': [-10, 10, -.25, .05], 's': [0, 1, 0.9, .1], 'r': [-10, 10, 1.0, 1.95]}
-    masking_choice = np.zeros(spatial_shape).astype(np.float32)
-    mean_metric_map = np.zeros(spatial_shape).astype(np.float32)
-    average_reciprocal_response_from_masking = np.zeros(spatial_shape).astype(np.float32)
-
-    # INITIALIZE AGENTS
-    agent_ids, agent_locations, unoccupied_locations, agent_types, agent_ids_map, types_map, d, s, r = initialize_agents(spatial_shape, proportion_filled, type_bias, params)
-    neighborhood_radius = np.int(neighborhood_radius)
-
-    for i in range(n_iterations):
-        n_changed = tribal_masking_computational_core.spatial_segregation_externality_game(
-            agent_ids, agent_locations, unoccupied_locations, agent_types, agent_ids_map,
-            types_map, threshold, neighborhood_radius, game_type,
-            d, s, r, masking_choice, average_reciprocal_response_from_masking, mean_metric_map,
-            reporting_threshold=0)
-        # End early if few agents move locations.
-        min_changers_to_end = 1
-        if n_changed <= min_changers_to_end:
-            break
-
-    return np.copy(np.asarray(masking_choice)), np.copy(np.asarray(types_map)), np.copy(np.asarray(mean_metric_map)), np.copy(np.asarray(average_reciprocal_response_from_masking)), agent_ids, agent_locations, unoccupied_locations, agent_types, agent_ids_map, types_map, d, s, r, masking_choice, mean_metric_map
-
-def get_masking_choice_time_variant(spatial_shape, proportion_filled, game_type, threshold, neighborhood_radius, type_bias, d_param, dd_param, s_param, sd_param, r_param, rd_param):
-    # For convenience, we define input parameters here via a dictionary.
-    params = {'d': [-10, 10, d_param, dd_param], 's': [0, 1, s_param, sd_param], 'r': [-10, 10, r_param, rd_param]}
-    # params = {'d': [-10, 10, -.25, .05], 's': [0, 1, 0.9, .1], 'r': [-10, 10, 1.0, 1.95]}
-    masking_choice = np.zeros(spatial_shape).astype(np.float32)
-    mean_metric_map = np.zeros(spatial_shape).astype(np.float32)
-    average_reciprocal_response_from_masking = np.zeros(spatial_shape).astype(np.float32)
-
-    agent_ids, agent_locations, unoccupied_locations, agent_types, agent_ids_map, types_map, d, s, r = initialize_agents(spatial_shape, proportion_filled, type_bias, params)
-    neighborhood_radius = np.int(neighborhood_radius)
-    n_iterations = 30
-    for i in range(n_iterations):
-        n_changed = tribal_masking_computational_core.spatial_segregation_externality_game(
-            agent_ids, agent_locations, unoccupied_locations, agent_types, agent_ids_map,
-            types_map, threshold, neighborhood_radius, game_type,
-            d, s, r, masking_choice, average_reciprocal_response_from_masking, mean_metric_map,
-            reporting_threshold=0)
-        # End early if few agents move locations.
-        min_changers_to_end = 1
-        if n_changed <= min_changers_to_end:
-            break
-
-    return np.copy(np.asarray(masking_choice)), np.copy(np.asarray(types_map)), np.copy(np.asarray(mean_metric_map)), np.copy(np.asarray(average_reciprocal_response_from_masking))
-
-def update_masking_choice_without_reposition(a1, a2, a3, a4, spatial_shape, proportion_filled, game_type, threshold, neighborhood_radius, type_bias, d_param, dd_param, s_param, sd_param, r_param, rd_param,
-                                             agent_ids, agent_locations, unoccupied_locations, agent_types, agent_ids_map, types_map, d, s, r):
-
-    # NOTE WEIRDNESS:
-    masking_choice = a1
-    # masking_choice = a2
-    mean_metric_map = a3
-    average_reciprocal_response_from_masking = a4
-
-    n_changed = tribal_masking_computational_core.spatial_segregation_externality_game_update_masking_params(
-        agent_ids, agent_locations, unoccupied_locations, agent_types, agent_ids_map,
-        types_map, threshold, neighborhood_radius, game_type,
-        d, s, r, masking_choice, average_reciprocal_response_from_masking, mean_metric_map,
-        reporting_threshold=0)
-
-    return np.copy(np.asarray(masking_choice)), np.copy(np.asarray(types_map)), np.copy(np.asarray(mean_metric_map)), np.copy(np.asarray(average_reciprocal_response_from_masking))
-
-def get_initial_masking_choice_object_oriented(model):
-
-    threshold, spatial_shape, proportion_filled, n_iterations, game_type, neighborhood_radius, type_bias, d_param, dd_param, s_param, sd_param, r_param, rd_param
-    # For convenience, we define input parameters here via a dictionary.
-    params = {'d': [-10, 10, d_param, dd_param], 's': [0, 1, s_param, sd_param], 'r': [-10, 10, r_param, rd_param]}
-    # params = {'d': [-10, 10, -.25, .05], 's': [0, 1, 0.9, .1], 'r': [-10, 10, 1.0, 1.95]}
-    masking_choice = np.zeros(spatial_shape).astype(np.float32)
-    mean_metric_map = np.zeros(spatial_shape).astype(np.float32)
-    average_reciprocal_response_from_masking = np.zeros(spatial_shape).astype(np.float32)
-
-    # INITIALIZE AGENTS
-    hb.timer('Starting to initialize agents.')
-    agent_ids, agent_locations, unoccupied_locations, agent_types, agent_ids_map, types_map, d, s, r = initialize_agents(spatial_shape, proportion_filled, type_bias, params)
-    neighborhood_radius = np.int(neighborhood_radius)
-
-    hb.timer('Finished initialize agents, starting to iterate.')
-    for i in range(n_iterations):
-        n_changed = tribal_masking_computational_core.spatial_segregation_externality_game(
-            agent_ids, agent_locations, unoccupied_locations, agent_types, agent_ids_map,
-            types_map, threshold, neighborhood_radius, game_type,
-            d, s, r, masking_choice, average_reciprocal_response_from_masking, mean_metric_map,
-            reporting_threshold=0)
-        # End early if few agents move locations.
-        min_changers_to_end = 1
-        if n_changed <= min_changers_to_end:
-            break
-
-    return np.copy(np.asarray(masking_choice)), np.copy(np.asarray(types_map)), np.copy(np.asarray(mean_metric_map)), np.copy(np.asarray(average_reciprocal_response_from_masking)), agent_ids, agent_locations, unoccupied_locations, agent_types, agent_ids_map, types_map, d, s, r, masking_choice, mean_metric_map
 
 
 if __name__=='__main__':
