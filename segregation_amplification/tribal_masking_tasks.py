@@ -23,7 +23,7 @@ if recompile_cython == True:
 import tribal_masking_model_classes
 import tribal_masking_computational_core
 import tribal_masking_tasks
-import tribal_masking_visualization
+import tribal_masking_view_classes
 
 def aspatial_externality_game(p):
     """Generates a two-dimensional plot analyzing how varying the mean of Direct Utilty, D, compared to varying mean of Response
@@ -148,11 +148,11 @@ def aspatial_externality_game(p):
 def combined_game_with_policies_and_infection(p):
 
     if p.run_this:
-        # START HERE: Consider having additional plotting functions that incorporate line graphs over time, export to CSV, export to gif, and
-        # run just a single step.
+
+        # Create the model
         model = tribal_masking_model_classes.tribal_masking_model(p.world_shape)
 
-        view = tribal_masking_visualization.tribal_masking_view(model)
-        # tribal_masking_visualization.plot_combined_game_interactive_infections(model)
+        # Assign and launch a viewer of the model.
+        view = tribal_masking_view_classes.tribal_masking_view(model)
 
 

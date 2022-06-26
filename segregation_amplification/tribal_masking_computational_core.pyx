@@ -20,7 +20,7 @@ cdef float RAND_MAX_float = <float>(RAND_MAX)
 
 @cython.cdivision(True)
 @cython.embedsignature(True)
-@cython.boundscheck(False)
+@cython.boundscheck(True)
 @cython.wraparound(True)
 cpdef float[::, ::1] spatial_externality_game(float[::, ::1] direct_benefit, float[::, ::1] social_benefit, float[::, ::1] reciprocal_response):
     cdef long n_rows = direct_benefit.shape[0]

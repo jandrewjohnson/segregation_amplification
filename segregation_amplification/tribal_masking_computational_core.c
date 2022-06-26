@@ -1525,6 +1525,9 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_Call(PyObject *func, PyObject *arg
 #define __Pyx_PyObject_Call(func, arg, kw) PyObject_Call(func, arg, kw)
 #endif
 
+/* BufferIndexError.proto */
+static void __Pyx_RaiseBufferIndexError(int axis);
+
 /* MemviewSliceInit.proto */
 #define __Pyx_BUF_MAX_NDIMS %(BUF_MAX_NDIMS)d
 #define __Pyx_MEMVIEW_DIRECT   1
@@ -1600,9 +1603,6 @@ static PyObject *__Pyx_PyDict_GetItem(PyObject *d, PyObject* key);
 #define __Pyx_PyDict_GetItem(d, key) PyObject_GetItem(d, key)
 #define __Pyx_PyObject_Dict_GetItem(obj, name)  PyObject_GetItem(obj, name)
 #endif
-
-/* BufferIndexError.proto */
-static void __Pyx_RaiseBufferIndexError(int axis);
 
 #define __Pyx_BufPtrStrided2d(type, buf, i0, s0, i1, s1) (type)((char*)buf + i0 * s0 + i1 * s1)
 /* IncludeStringH.proto */
@@ -2718,7 +2718,7 @@ static PyObject *__pyx_codeobj__29;
 /* Late includes */
 
 /* "tribal_masking_computational_core.pyx":25
- * @cython.boundscheck(False)
+ * @cython.boundscheck(True)
  * @cython.wraparound(True)
  * cpdef float[::, ::1] spatial_externality_game(float[::, ::1] direct_benefit, float[::, ::1] social_benefit, float[::, ::1] reciprocal_response):             # <<<<<<<<<<<<<<
  *     cdef long n_rows = direct_benefit.shape[0]
@@ -2754,16 +2754,17 @@ static __Pyx_memviewslice __pyx_f_33tribal_masking_computational_core_spatial_ex
   long __pyx_t_11;
   Py_ssize_t __pyx_t_12;
   Py_ssize_t __pyx_t_13;
-  Py_ssize_t __pyx_t_14;
+  int __pyx_t_14;
   Py_ssize_t __pyx_t_15;
   Py_ssize_t __pyx_t_16;
   Py_ssize_t __pyx_t_17;
   Py_ssize_t __pyx_t_18;
   Py_ssize_t __pyx_t_19;
-  long __pyx_t_20;
+  Py_ssize_t __pyx_t_20;
   long __pyx_t_21;
-  int __pyx_t_22;
+  long __pyx_t_22;
   int __pyx_t_23;
+  int __pyx_t_24;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -3004,21 +3005,65 @@ static __Pyx_memviewslice __pyx_f_33tribal_masking_computational_core_spatial_ex
  */
       __pyx_t_12 = __pyx_v_r;
       __pyx_t_13 = __pyx_v_c;
-      if (__pyx_t_12 < 0) __pyx_t_12 += __pyx_v_direct_benefit.shape[0];
-      if (__pyx_t_13 < 0) __pyx_t_13 += __pyx_v_direct_benefit.shape[1];
-      __pyx_t_14 = __pyx_v_r;
-      __pyx_t_15 = __pyx_v_c;
-      if (__pyx_t_14 < 0) __pyx_t_14 += __pyx_v_social_benefit.shape[0];
-      if (__pyx_t_15 < 0) __pyx_t_15 += __pyx_v_social_benefit.shape[1];
-      __pyx_t_16 = __pyx_v_r;
-      __pyx_t_17 = __pyx_v_c;
-      if (__pyx_t_16 < 0) __pyx_t_16 += __pyx_v_reciprocal_response.shape[0];
-      if (__pyx_t_17 < 0) __pyx_t_17 += __pyx_v_reciprocal_response.shape[1];
-      __pyx_t_18 = __pyx_v_r;
-      __pyx_t_19 = __pyx_v_c;
-      if (__pyx_t_18 < 0) __pyx_t_18 += __pyx_v_output_array.shape[0];
-      if (__pyx_t_19 < 0) __pyx_t_19 += __pyx_v_output_array.shape[1];
-      *((float *) ( /* dim=1 */ ((char *) (((float *) ( /* dim=0 */ (__pyx_v_output_array.data + __pyx_t_18 * __pyx_v_output_array.strides[0]) )) + __pyx_t_19)) )) = (((*((float *) ( /* dim=1 */ ((char *) (((float *) ( /* dim=0 */ (__pyx_v_direct_benefit.data + __pyx_t_12 * __pyx_v_direct_benefit.strides[0]) )) + __pyx_t_13)) ))) + (*((float *) ( /* dim=1 */ ((char *) (((float *) ( /* dim=0 */ (__pyx_v_social_benefit.data + __pyx_t_14 * __pyx_v_social_benefit.strides[0]) )) + __pyx_t_15)) )))) + (*((float *) ( /* dim=1 */ ((char *) (((float *) ( /* dim=0 */ (__pyx_v_reciprocal_response.data + __pyx_t_16 * __pyx_v_reciprocal_response.strides[0]) )) + __pyx_t_17)) ))));
+      __pyx_t_14 = -1;
+      if (__pyx_t_12 < 0) {
+        __pyx_t_12 += __pyx_v_direct_benefit.shape[0];
+        if (unlikely(__pyx_t_12 < 0)) __pyx_t_14 = 0;
+      } else if (unlikely(__pyx_t_12 >= __pyx_v_direct_benefit.shape[0])) __pyx_t_14 = 0;
+      if (__pyx_t_13 < 0) {
+        __pyx_t_13 += __pyx_v_direct_benefit.shape[1];
+        if (unlikely(__pyx_t_13 < 0)) __pyx_t_14 = 1;
+      } else if (unlikely(__pyx_t_13 >= __pyx_v_direct_benefit.shape[1])) __pyx_t_14 = 1;
+      if (unlikely(__pyx_t_14 != -1)) {
+        __Pyx_RaiseBufferIndexError(__pyx_t_14);
+        __PYX_ERR(0, 40, __pyx_L1_error)
+      }
+      __pyx_t_15 = __pyx_v_r;
+      __pyx_t_16 = __pyx_v_c;
+      __pyx_t_14 = -1;
+      if (__pyx_t_15 < 0) {
+        __pyx_t_15 += __pyx_v_social_benefit.shape[0];
+        if (unlikely(__pyx_t_15 < 0)) __pyx_t_14 = 0;
+      } else if (unlikely(__pyx_t_15 >= __pyx_v_social_benefit.shape[0])) __pyx_t_14 = 0;
+      if (__pyx_t_16 < 0) {
+        __pyx_t_16 += __pyx_v_social_benefit.shape[1];
+        if (unlikely(__pyx_t_16 < 0)) __pyx_t_14 = 1;
+      } else if (unlikely(__pyx_t_16 >= __pyx_v_social_benefit.shape[1])) __pyx_t_14 = 1;
+      if (unlikely(__pyx_t_14 != -1)) {
+        __Pyx_RaiseBufferIndexError(__pyx_t_14);
+        __PYX_ERR(0, 40, __pyx_L1_error)
+      }
+      __pyx_t_17 = __pyx_v_r;
+      __pyx_t_18 = __pyx_v_c;
+      __pyx_t_14 = -1;
+      if (__pyx_t_17 < 0) {
+        __pyx_t_17 += __pyx_v_reciprocal_response.shape[0];
+        if (unlikely(__pyx_t_17 < 0)) __pyx_t_14 = 0;
+      } else if (unlikely(__pyx_t_17 >= __pyx_v_reciprocal_response.shape[0])) __pyx_t_14 = 0;
+      if (__pyx_t_18 < 0) {
+        __pyx_t_18 += __pyx_v_reciprocal_response.shape[1];
+        if (unlikely(__pyx_t_18 < 0)) __pyx_t_14 = 1;
+      } else if (unlikely(__pyx_t_18 >= __pyx_v_reciprocal_response.shape[1])) __pyx_t_14 = 1;
+      if (unlikely(__pyx_t_14 != -1)) {
+        __Pyx_RaiseBufferIndexError(__pyx_t_14);
+        __PYX_ERR(0, 40, __pyx_L1_error)
+      }
+      __pyx_t_19 = __pyx_v_r;
+      __pyx_t_20 = __pyx_v_c;
+      __pyx_t_14 = -1;
+      if (__pyx_t_19 < 0) {
+        __pyx_t_19 += __pyx_v_output_array.shape[0];
+        if (unlikely(__pyx_t_19 < 0)) __pyx_t_14 = 0;
+      } else if (unlikely(__pyx_t_19 >= __pyx_v_output_array.shape[0])) __pyx_t_14 = 0;
+      if (__pyx_t_20 < 0) {
+        __pyx_t_20 += __pyx_v_output_array.shape[1];
+        if (unlikely(__pyx_t_20 < 0)) __pyx_t_14 = 1;
+      } else if (unlikely(__pyx_t_20 >= __pyx_v_output_array.shape[1])) __pyx_t_14 = 1;
+      if (unlikely(__pyx_t_14 != -1)) {
+        __Pyx_RaiseBufferIndexError(__pyx_t_14);
+        __PYX_ERR(0, 40, __pyx_L1_error)
+      }
+      *((float *) ( /* dim=1 */ ((char *) (((float *) ( /* dim=0 */ (__pyx_v_output_array.data + __pyx_t_19 * __pyx_v_output_array.strides[0]) )) + __pyx_t_20)) )) = (((*((float *) ( /* dim=1 */ ((char *) (((float *) ( /* dim=0 */ (__pyx_v_direct_benefit.data + __pyx_t_12 * __pyx_v_direct_benefit.strides[0]) )) + __pyx_t_13)) ))) + (*((float *) ( /* dim=1 */ ((char *) (((float *) ( /* dim=0 */ (__pyx_v_social_benefit.data + __pyx_t_15 * __pyx_v_social_benefit.strides[0]) )) + __pyx_t_16)) )))) + (*((float *) ( /* dim=1 */ ((char *) (((float *) ( /* dim=0 */ (__pyx_v_reciprocal_response.data + __pyx_t_17 * __pyx_v_reciprocal_response.strides[0]) )) + __pyx_t_18)) ))));
 
       /* "tribal_masking_computational_core.pyx":42
  *             output_array[r, c] = direct_benefit[r, c] + social_benefit[r, c] + reciprocal_response[r, c]
@@ -3027,8 +3072,8 @@ static __Pyx_memviewslice __pyx_f_33tribal_masking_computational_core_spatial_ex
  *                 for cd in range(-1, 1):
  *                     # Possible optimization: remove testing for own cell by smartly building tuples of which to test. Might also be done when considering non d8 neighbors.
  */
-      for (__pyx_t_20 = -1L; __pyx_t_20 < 1; __pyx_t_20+=1) {
-        __pyx_v_rd = __pyx_t_20;
+      for (__pyx_t_21 = -1L; __pyx_t_21 < 1; __pyx_t_21+=1) {
+        __pyx_v_rd = __pyx_t_21;
 
         /* "tribal_masking_computational_core.pyx":43
  * 
@@ -3037,8 +3082,8 @@ static __Pyx_memviewslice __pyx_f_33tribal_masking_computational_core_spatial_ex
  *                     # Possible optimization: remove testing for own cell by smartly building tuples of which to test. Might also be done when considering non d8 neighbors.
  * 
  */
-        for (__pyx_t_21 = -1L; __pyx_t_21 < 1; __pyx_t_21+=1) {
-          __pyx_v_cd = __pyx_t_21;
+        for (__pyx_t_22 = -1L; __pyx_t_22 < 1; __pyx_t_22+=1) {
+          __pyx_v_cd = __pyx_t_22;
 
           /* "tribal_masking_computational_core.pyx":46
  *                     # Possible optimization: remove testing for own cell by smartly building tuples of which to test. Might also be done when considering non d8 neighbors.
@@ -3047,17 +3092,17 @@ static __Pyx_memviewslice __pyx_f_33tribal_masking_computational_core_spatial_ex
  *                         average_reciprocal_response_from_masking[r, c] += reciprocal_response[r + rd, c + cd]
  *                         average_reciprocal_response_from_not_masking[r, c] += -1 * reciprocal_response[r + rd, c + cd]
  */
-          __pyx_t_23 = ((__pyx_v_rd == 0) != 0);
-          if (__pyx_t_23) {
+          __pyx_t_24 = ((__pyx_v_rd == 0) != 0);
+          if (__pyx_t_24) {
           } else {
-            __pyx_t_22 = __pyx_t_23;
+            __pyx_t_23 = __pyx_t_24;
             goto __pyx_L12_bool_binop_done;
           }
-          __pyx_t_23 = ((__pyx_v_cd == 0) != 0);
-          __pyx_t_22 = __pyx_t_23;
+          __pyx_t_24 = ((__pyx_v_cd == 0) != 0);
+          __pyx_t_23 = __pyx_t_24;
           __pyx_L12_bool_binop_done:;
-          __pyx_t_23 = ((!__pyx_t_22) != 0);
-          if (__pyx_t_23) {
+          __pyx_t_24 = ((!__pyx_t_23) != 0);
+          if (__pyx_t_24) {
 
             /* "tribal_masking_computational_core.pyx":47
  * 
@@ -3066,15 +3111,37 @@ static __Pyx_memviewslice __pyx_f_33tribal_masking_computational_core_spatial_ex
  *                         average_reciprocal_response_from_not_masking[r, c] += -1 * reciprocal_response[r + rd, c + cd]
  * 
  */
-            __pyx_t_17 = (__pyx_v_r + __pyx_v_rd);
-            __pyx_t_16 = (__pyx_v_c + __pyx_v_cd);
-            if (__pyx_t_17 < 0) __pyx_t_17 += __pyx_v_reciprocal_response.shape[0];
-            if (__pyx_t_16 < 0) __pyx_t_16 += __pyx_v_reciprocal_response.shape[1];
-            __pyx_t_15 = __pyx_v_r;
-            __pyx_t_14 = __pyx_v_c;
-            if (__pyx_t_15 < 0) __pyx_t_15 += __pyx_v_average_reciprocal_response_from_masking.shape[0];
-            if (__pyx_t_14 < 0) __pyx_t_14 += __pyx_v_average_reciprocal_response_from_masking.shape[1];
-            *((float *) ( /* dim=1 */ ((char *) (((float *) ( /* dim=0 */ (__pyx_v_average_reciprocal_response_from_masking.data + __pyx_t_15 * __pyx_v_average_reciprocal_response_from_masking.strides[0]) )) + __pyx_t_14)) )) += (*((float *) ( /* dim=1 */ ((char *) (((float *) ( /* dim=0 */ (__pyx_v_reciprocal_response.data + __pyx_t_17 * __pyx_v_reciprocal_response.strides[0]) )) + __pyx_t_16)) )));
+            __pyx_t_18 = (__pyx_v_r + __pyx_v_rd);
+            __pyx_t_17 = (__pyx_v_c + __pyx_v_cd);
+            __pyx_t_14 = -1;
+            if (__pyx_t_18 < 0) {
+              __pyx_t_18 += __pyx_v_reciprocal_response.shape[0];
+              if (unlikely(__pyx_t_18 < 0)) __pyx_t_14 = 0;
+            } else if (unlikely(__pyx_t_18 >= __pyx_v_reciprocal_response.shape[0])) __pyx_t_14 = 0;
+            if (__pyx_t_17 < 0) {
+              __pyx_t_17 += __pyx_v_reciprocal_response.shape[1];
+              if (unlikely(__pyx_t_17 < 0)) __pyx_t_14 = 1;
+            } else if (unlikely(__pyx_t_17 >= __pyx_v_reciprocal_response.shape[1])) __pyx_t_14 = 1;
+            if (unlikely(__pyx_t_14 != -1)) {
+              __Pyx_RaiseBufferIndexError(__pyx_t_14);
+              __PYX_ERR(0, 47, __pyx_L1_error)
+            }
+            __pyx_t_16 = __pyx_v_r;
+            __pyx_t_15 = __pyx_v_c;
+            __pyx_t_14 = -1;
+            if (__pyx_t_16 < 0) {
+              __pyx_t_16 += __pyx_v_average_reciprocal_response_from_masking.shape[0];
+              if (unlikely(__pyx_t_16 < 0)) __pyx_t_14 = 0;
+            } else if (unlikely(__pyx_t_16 >= __pyx_v_average_reciprocal_response_from_masking.shape[0])) __pyx_t_14 = 0;
+            if (__pyx_t_15 < 0) {
+              __pyx_t_15 += __pyx_v_average_reciprocal_response_from_masking.shape[1];
+              if (unlikely(__pyx_t_15 < 0)) __pyx_t_14 = 1;
+            } else if (unlikely(__pyx_t_15 >= __pyx_v_average_reciprocal_response_from_masking.shape[1])) __pyx_t_14 = 1;
+            if (unlikely(__pyx_t_14 != -1)) {
+              __Pyx_RaiseBufferIndexError(__pyx_t_14);
+              __PYX_ERR(0, 47, __pyx_L1_error)
+            }
+            *((float *) ( /* dim=1 */ ((char *) (((float *) ( /* dim=0 */ (__pyx_v_average_reciprocal_response_from_masking.data + __pyx_t_16 * __pyx_v_average_reciprocal_response_from_masking.strides[0]) )) + __pyx_t_15)) )) += (*((float *) ( /* dim=1 */ ((char *) (((float *) ( /* dim=0 */ (__pyx_v_reciprocal_response.data + __pyx_t_18 * __pyx_v_reciprocal_response.strides[0]) )) + __pyx_t_17)) )));
 
             /* "tribal_masking_computational_core.pyx":48
  *                     if not (rd == 0 and cd == 0): # Make sure to not account for one's reciprocal response to themself.
@@ -3083,15 +3150,37 @@ static __Pyx_memviewslice __pyx_f_33tribal_masking_computational_core_spatial_ex
  * 
  *             average_reciprocal_response_from_masking[r, c] = average_reciprocal_response_from_masking[r, c] / 8.
  */
-            __pyx_t_16 = (__pyx_v_r + __pyx_v_rd);
-            __pyx_t_17 = (__pyx_v_c + __pyx_v_cd);
-            if (__pyx_t_16 < 0) __pyx_t_16 += __pyx_v_reciprocal_response.shape[0];
-            if (__pyx_t_17 < 0) __pyx_t_17 += __pyx_v_reciprocal_response.shape[1];
-            __pyx_t_14 = __pyx_v_r;
-            __pyx_t_15 = __pyx_v_c;
-            if (__pyx_t_14 < 0) __pyx_t_14 += __pyx_v_average_reciprocal_response_from_not_masking.shape[0];
-            if (__pyx_t_15 < 0) __pyx_t_15 += __pyx_v_average_reciprocal_response_from_not_masking.shape[1];
-            *((float *) ( /* dim=1 */ ((char *) (((float *) ( /* dim=0 */ (__pyx_v_average_reciprocal_response_from_not_masking.data + __pyx_t_14 * __pyx_v_average_reciprocal_response_from_not_masking.strides[0]) )) + __pyx_t_15)) )) += (-1.0 * (*((float *) ( /* dim=1 */ ((char *) (((float *) ( /* dim=0 */ (__pyx_v_reciprocal_response.data + __pyx_t_16 * __pyx_v_reciprocal_response.strides[0]) )) + __pyx_t_17)) ))));
+            __pyx_t_17 = (__pyx_v_r + __pyx_v_rd);
+            __pyx_t_18 = (__pyx_v_c + __pyx_v_cd);
+            __pyx_t_14 = -1;
+            if (__pyx_t_17 < 0) {
+              __pyx_t_17 += __pyx_v_reciprocal_response.shape[0];
+              if (unlikely(__pyx_t_17 < 0)) __pyx_t_14 = 0;
+            } else if (unlikely(__pyx_t_17 >= __pyx_v_reciprocal_response.shape[0])) __pyx_t_14 = 0;
+            if (__pyx_t_18 < 0) {
+              __pyx_t_18 += __pyx_v_reciprocal_response.shape[1];
+              if (unlikely(__pyx_t_18 < 0)) __pyx_t_14 = 1;
+            } else if (unlikely(__pyx_t_18 >= __pyx_v_reciprocal_response.shape[1])) __pyx_t_14 = 1;
+            if (unlikely(__pyx_t_14 != -1)) {
+              __Pyx_RaiseBufferIndexError(__pyx_t_14);
+              __PYX_ERR(0, 48, __pyx_L1_error)
+            }
+            __pyx_t_15 = __pyx_v_r;
+            __pyx_t_16 = __pyx_v_c;
+            __pyx_t_14 = -1;
+            if (__pyx_t_15 < 0) {
+              __pyx_t_15 += __pyx_v_average_reciprocal_response_from_not_masking.shape[0];
+              if (unlikely(__pyx_t_15 < 0)) __pyx_t_14 = 0;
+            } else if (unlikely(__pyx_t_15 >= __pyx_v_average_reciprocal_response_from_not_masking.shape[0])) __pyx_t_14 = 0;
+            if (__pyx_t_16 < 0) {
+              __pyx_t_16 += __pyx_v_average_reciprocal_response_from_not_masking.shape[1];
+              if (unlikely(__pyx_t_16 < 0)) __pyx_t_14 = 1;
+            } else if (unlikely(__pyx_t_16 >= __pyx_v_average_reciprocal_response_from_not_masking.shape[1])) __pyx_t_14 = 1;
+            if (unlikely(__pyx_t_14 != -1)) {
+              __Pyx_RaiseBufferIndexError(__pyx_t_14);
+              __PYX_ERR(0, 48, __pyx_L1_error)
+            }
+            *((float *) ( /* dim=1 */ ((char *) (((float *) ( /* dim=0 */ (__pyx_v_average_reciprocal_response_from_not_masking.data + __pyx_t_15 * __pyx_v_average_reciprocal_response_from_not_masking.strides[0]) )) + __pyx_t_16)) )) += (-1.0 * (*((float *) ( /* dim=1 */ ((char *) (((float *) ( /* dim=0 */ (__pyx_v_reciprocal_response.data + __pyx_t_17 * __pyx_v_reciprocal_response.strides[0]) )) + __pyx_t_18)) ))));
 
             /* "tribal_masking_computational_core.pyx":46
  *                     # Possible optimization: remove testing for own cell by smartly building tuples of which to test. Might also be done when considering non d8 neighbors.
@@ -3111,15 +3200,37 @@ static __Pyx_memviewslice __pyx_f_33tribal_masking_computational_core_spatial_ex
  *             utility_from_masking = direct_benefit[r, c] + social_benefit[r, c] * average_reciprocal_response_from_masking[r, c] # Note implicit masking_choice as * 1
  *             utility_from_not_masking = -1 * direct_benefit[r, c] + social_benefit[r, c] * average_reciprocal_response_from_not_masking[r, c]
  */
-      __pyx_t_17 = __pyx_v_r;
-      __pyx_t_16 = __pyx_v_c;
-      if (__pyx_t_17 < 0) __pyx_t_17 += __pyx_v_average_reciprocal_response_from_masking.shape[0];
-      if (__pyx_t_16 < 0) __pyx_t_16 += __pyx_v_average_reciprocal_response_from_masking.shape[1];
-      __pyx_t_15 = __pyx_v_r;
-      __pyx_t_14 = __pyx_v_c;
-      if (__pyx_t_15 < 0) __pyx_t_15 += __pyx_v_average_reciprocal_response_from_masking.shape[0];
-      if (__pyx_t_14 < 0) __pyx_t_14 += __pyx_v_average_reciprocal_response_from_masking.shape[1];
-      *((float *) ( /* dim=1 */ ((char *) (((float *) ( /* dim=0 */ (__pyx_v_average_reciprocal_response_from_masking.data + __pyx_t_15 * __pyx_v_average_reciprocal_response_from_masking.strides[0]) )) + __pyx_t_14)) )) = ((*((float *) ( /* dim=1 */ ((char *) (((float *) ( /* dim=0 */ (__pyx_v_average_reciprocal_response_from_masking.data + __pyx_t_17 * __pyx_v_average_reciprocal_response_from_masking.strides[0]) )) + __pyx_t_16)) ))) / 8.);
+      __pyx_t_18 = __pyx_v_r;
+      __pyx_t_17 = __pyx_v_c;
+      __pyx_t_14 = -1;
+      if (__pyx_t_18 < 0) {
+        __pyx_t_18 += __pyx_v_average_reciprocal_response_from_masking.shape[0];
+        if (unlikely(__pyx_t_18 < 0)) __pyx_t_14 = 0;
+      } else if (unlikely(__pyx_t_18 >= __pyx_v_average_reciprocal_response_from_masking.shape[0])) __pyx_t_14 = 0;
+      if (__pyx_t_17 < 0) {
+        __pyx_t_17 += __pyx_v_average_reciprocal_response_from_masking.shape[1];
+        if (unlikely(__pyx_t_17 < 0)) __pyx_t_14 = 1;
+      } else if (unlikely(__pyx_t_17 >= __pyx_v_average_reciprocal_response_from_masking.shape[1])) __pyx_t_14 = 1;
+      if (unlikely(__pyx_t_14 != -1)) {
+        __Pyx_RaiseBufferIndexError(__pyx_t_14);
+        __PYX_ERR(0, 50, __pyx_L1_error)
+      }
+      __pyx_t_16 = __pyx_v_r;
+      __pyx_t_15 = __pyx_v_c;
+      __pyx_t_14 = -1;
+      if (__pyx_t_16 < 0) {
+        __pyx_t_16 += __pyx_v_average_reciprocal_response_from_masking.shape[0];
+        if (unlikely(__pyx_t_16 < 0)) __pyx_t_14 = 0;
+      } else if (unlikely(__pyx_t_16 >= __pyx_v_average_reciprocal_response_from_masking.shape[0])) __pyx_t_14 = 0;
+      if (__pyx_t_15 < 0) {
+        __pyx_t_15 += __pyx_v_average_reciprocal_response_from_masking.shape[1];
+        if (unlikely(__pyx_t_15 < 0)) __pyx_t_14 = 1;
+      } else if (unlikely(__pyx_t_15 >= __pyx_v_average_reciprocal_response_from_masking.shape[1])) __pyx_t_14 = 1;
+      if (unlikely(__pyx_t_14 != -1)) {
+        __Pyx_RaiseBufferIndexError(__pyx_t_14);
+        __PYX_ERR(0, 50, __pyx_L1_error)
+      }
+      *((float *) ( /* dim=1 */ ((char *) (((float *) ( /* dim=0 */ (__pyx_v_average_reciprocal_response_from_masking.data + __pyx_t_16 * __pyx_v_average_reciprocal_response_from_masking.strides[0]) )) + __pyx_t_15)) )) = ((*((float *) ( /* dim=1 */ ((char *) (((float *) ( /* dim=0 */ (__pyx_v_average_reciprocal_response_from_masking.data + __pyx_t_18 * __pyx_v_average_reciprocal_response_from_masking.strides[0]) )) + __pyx_t_17)) ))) / 8.);
 
       /* "tribal_masking_computational_core.pyx":51
  * 
@@ -3128,19 +3239,52 @@ static __Pyx_memviewslice __pyx_f_33tribal_masking_computational_core_spatial_ex
  *             utility_from_not_masking = -1 * direct_benefit[r, c] + social_benefit[r, c] * average_reciprocal_response_from_not_masking[r, c]
  * 
  */
-      __pyx_t_16 = __pyx_v_r;
-      __pyx_t_17 = __pyx_v_c;
-      if (__pyx_t_16 < 0) __pyx_t_16 += __pyx_v_direct_benefit.shape[0];
-      if (__pyx_t_17 < 0) __pyx_t_17 += __pyx_v_direct_benefit.shape[1];
-      __pyx_t_14 = __pyx_v_r;
-      __pyx_t_15 = __pyx_v_c;
-      if (__pyx_t_14 < 0) __pyx_t_14 += __pyx_v_social_benefit.shape[0];
-      if (__pyx_t_15 < 0) __pyx_t_15 += __pyx_v_social_benefit.shape[1];
+      __pyx_t_17 = __pyx_v_r;
+      __pyx_t_18 = __pyx_v_c;
+      __pyx_t_14 = -1;
+      if (__pyx_t_17 < 0) {
+        __pyx_t_17 += __pyx_v_direct_benefit.shape[0];
+        if (unlikely(__pyx_t_17 < 0)) __pyx_t_14 = 0;
+      } else if (unlikely(__pyx_t_17 >= __pyx_v_direct_benefit.shape[0])) __pyx_t_14 = 0;
+      if (__pyx_t_18 < 0) {
+        __pyx_t_18 += __pyx_v_direct_benefit.shape[1];
+        if (unlikely(__pyx_t_18 < 0)) __pyx_t_14 = 1;
+      } else if (unlikely(__pyx_t_18 >= __pyx_v_direct_benefit.shape[1])) __pyx_t_14 = 1;
+      if (unlikely(__pyx_t_14 != -1)) {
+        __Pyx_RaiseBufferIndexError(__pyx_t_14);
+        __PYX_ERR(0, 51, __pyx_L1_error)
+      }
+      __pyx_t_15 = __pyx_v_r;
+      __pyx_t_16 = __pyx_v_c;
+      __pyx_t_14 = -1;
+      if (__pyx_t_15 < 0) {
+        __pyx_t_15 += __pyx_v_social_benefit.shape[0];
+        if (unlikely(__pyx_t_15 < 0)) __pyx_t_14 = 0;
+      } else if (unlikely(__pyx_t_15 >= __pyx_v_social_benefit.shape[0])) __pyx_t_14 = 0;
+      if (__pyx_t_16 < 0) {
+        __pyx_t_16 += __pyx_v_social_benefit.shape[1];
+        if (unlikely(__pyx_t_16 < 0)) __pyx_t_14 = 1;
+      } else if (unlikely(__pyx_t_16 >= __pyx_v_social_benefit.shape[1])) __pyx_t_14 = 1;
+      if (unlikely(__pyx_t_14 != -1)) {
+        __Pyx_RaiseBufferIndexError(__pyx_t_14);
+        __PYX_ERR(0, 51, __pyx_L1_error)
+      }
       __pyx_t_13 = __pyx_v_r;
       __pyx_t_12 = __pyx_v_c;
-      if (__pyx_t_13 < 0) __pyx_t_13 += __pyx_v_average_reciprocal_response_from_masking.shape[0];
-      if (__pyx_t_12 < 0) __pyx_t_12 += __pyx_v_average_reciprocal_response_from_masking.shape[1];
-      __pyx_v_utility_from_masking = ((*((float *) ( /* dim=1 */ ((char *) (((float *) ( /* dim=0 */ (__pyx_v_direct_benefit.data + __pyx_t_16 * __pyx_v_direct_benefit.strides[0]) )) + __pyx_t_17)) ))) + ((*((float *) ( /* dim=1 */ ((char *) (((float *) ( /* dim=0 */ (__pyx_v_social_benefit.data + __pyx_t_14 * __pyx_v_social_benefit.strides[0]) )) + __pyx_t_15)) ))) * (*((float *) ( /* dim=1 */ ((char *) (((float *) ( /* dim=0 */ (__pyx_v_average_reciprocal_response_from_masking.data + __pyx_t_13 * __pyx_v_average_reciprocal_response_from_masking.strides[0]) )) + __pyx_t_12)) )))));
+      __pyx_t_14 = -1;
+      if (__pyx_t_13 < 0) {
+        __pyx_t_13 += __pyx_v_average_reciprocal_response_from_masking.shape[0];
+        if (unlikely(__pyx_t_13 < 0)) __pyx_t_14 = 0;
+      } else if (unlikely(__pyx_t_13 >= __pyx_v_average_reciprocal_response_from_masking.shape[0])) __pyx_t_14 = 0;
+      if (__pyx_t_12 < 0) {
+        __pyx_t_12 += __pyx_v_average_reciprocal_response_from_masking.shape[1];
+        if (unlikely(__pyx_t_12 < 0)) __pyx_t_14 = 1;
+      } else if (unlikely(__pyx_t_12 >= __pyx_v_average_reciprocal_response_from_masking.shape[1])) __pyx_t_14 = 1;
+      if (unlikely(__pyx_t_14 != -1)) {
+        __Pyx_RaiseBufferIndexError(__pyx_t_14);
+        __PYX_ERR(0, 51, __pyx_L1_error)
+      }
+      __pyx_v_utility_from_masking = ((*((float *) ( /* dim=1 */ ((char *) (((float *) ( /* dim=0 */ (__pyx_v_direct_benefit.data + __pyx_t_17 * __pyx_v_direct_benefit.strides[0]) )) + __pyx_t_18)) ))) + ((*((float *) ( /* dim=1 */ ((char *) (((float *) ( /* dim=0 */ (__pyx_v_social_benefit.data + __pyx_t_15 * __pyx_v_social_benefit.strides[0]) )) + __pyx_t_16)) ))) * (*((float *) ( /* dim=1 */ ((char *) (((float *) ( /* dim=0 */ (__pyx_v_average_reciprocal_response_from_masking.data + __pyx_t_13 * __pyx_v_average_reciprocal_response_from_masking.strides[0]) )) + __pyx_t_12)) )))));
 
       /* "tribal_masking_computational_core.pyx":52
  *             average_reciprocal_response_from_masking[r, c] = average_reciprocal_response_from_masking[r, c] / 8.
@@ -3151,17 +3295,50 @@ static __Pyx_memviewslice __pyx_f_33tribal_masking_computational_core_spatial_ex
  */
       __pyx_t_12 = __pyx_v_r;
       __pyx_t_13 = __pyx_v_c;
-      if (__pyx_t_12 < 0) __pyx_t_12 += __pyx_v_direct_benefit.shape[0];
-      if (__pyx_t_13 < 0) __pyx_t_13 += __pyx_v_direct_benefit.shape[1];
-      __pyx_t_15 = __pyx_v_r;
-      __pyx_t_14 = __pyx_v_c;
-      if (__pyx_t_15 < 0) __pyx_t_15 += __pyx_v_social_benefit.shape[0];
-      if (__pyx_t_14 < 0) __pyx_t_14 += __pyx_v_social_benefit.shape[1];
-      __pyx_t_17 = __pyx_v_r;
-      __pyx_t_16 = __pyx_v_c;
-      if (__pyx_t_17 < 0) __pyx_t_17 += __pyx_v_average_reciprocal_response_from_not_masking.shape[0];
-      if (__pyx_t_16 < 0) __pyx_t_16 += __pyx_v_average_reciprocal_response_from_not_masking.shape[1];
-      __pyx_v_utility_from_not_masking = ((-1.0 * (*((float *) ( /* dim=1 */ ((char *) (((float *) ( /* dim=0 */ (__pyx_v_direct_benefit.data + __pyx_t_12 * __pyx_v_direct_benefit.strides[0]) )) + __pyx_t_13)) )))) + ((*((float *) ( /* dim=1 */ ((char *) (((float *) ( /* dim=0 */ (__pyx_v_social_benefit.data + __pyx_t_15 * __pyx_v_social_benefit.strides[0]) )) + __pyx_t_14)) ))) * (*((float *) ( /* dim=1 */ ((char *) (((float *) ( /* dim=0 */ (__pyx_v_average_reciprocal_response_from_not_masking.data + __pyx_t_17 * __pyx_v_average_reciprocal_response_from_not_masking.strides[0]) )) + __pyx_t_16)) )))));
+      __pyx_t_14 = -1;
+      if (__pyx_t_12 < 0) {
+        __pyx_t_12 += __pyx_v_direct_benefit.shape[0];
+        if (unlikely(__pyx_t_12 < 0)) __pyx_t_14 = 0;
+      } else if (unlikely(__pyx_t_12 >= __pyx_v_direct_benefit.shape[0])) __pyx_t_14 = 0;
+      if (__pyx_t_13 < 0) {
+        __pyx_t_13 += __pyx_v_direct_benefit.shape[1];
+        if (unlikely(__pyx_t_13 < 0)) __pyx_t_14 = 1;
+      } else if (unlikely(__pyx_t_13 >= __pyx_v_direct_benefit.shape[1])) __pyx_t_14 = 1;
+      if (unlikely(__pyx_t_14 != -1)) {
+        __Pyx_RaiseBufferIndexError(__pyx_t_14);
+        __PYX_ERR(0, 52, __pyx_L1_error)
+      }
+      __pyx_t_16 = __pyx_v_r;
+      __pyx_t_15 = __pyx_v_c;
+      __pyx_t_14 = -1;
+      if (__pyx_t_16 < 0) {
+        __pyx_t_16 += __pyx_v_social_benefit.shape[0];
+        if (unlikely(__pyx_t_16 < 0)) __pyx_t_14 = 0;
+      } else if (unlikely(__pyx_t_16 >= __pyx_v_social_benefit.shape[0])) __pyx_t_14 = 0;
+      if (__pyx_t_15 < 0) {
+        __pyx_t_15 += __pyx_v_social_benefit.shape[1];
+        if (unlikely(__pyx_t_15 < 0)) __pyx_t_14 = 1;
+      } else if (unlikely(__pyx_t_15 >= __pyx_v_social_benefit.shape[1])) __pyx_t_14 = 1;
+      if (unlikely(__pyx_t_14 != -1)) {
+        __Pyx_RaiseBufferIndexError(__pyx_t_14);
+        __PYX_ERR(0, 52, __pyx_L1_error)
+      }
+      __pyx_t_18 = __pyx_v_r;
+      __pyx_t_17 = __pyx_v_c;
+      __pyx_t_14 = -1;
+      if (__pyx_t_18 < 0) {
+        __pyx_t_18 += __pyx_v_average_reciprocal_response_from_not_masking.shape[0];
+        if (unlikely(__pyx_t_18 < 0)) __pyx_t_14 = 0;
+      } else if (unlikely(__pyx_t_18 >= __pyx_v_average_reciprocal_response_from_not_masking.shape[0])) __pyx_t_14 = 0;
+      if (__pyx_t_17 < 0) {
+        __pyx_t_17 += __pyx_v_average_reciprocal_response_from_not_masking.shape[1];
+        if (unlikely(__pyx_t_17 < 0)) __pyx_t_14 = 1;
+      } else if (unlikely(__pyx_t_17 >= __pyx_v_average_reciprocal_response_from_not_masking.shape[1])) __pyx_t_14 = 1;
+      if (unlikely(__pyx_t_14 != -1)) {
+        __Pyx_RaiseBufferIndexError(__pyx_t_14);
+        __PYX_ERR(0, 52, __pyx_L1_error)
+      }
+      __pyx_v_utility_from_not_masking = ((-1.0 * (*((float *) ( /* dim=1 */ ((char *) (((float *) ( /* dim=0 */ (__pyx_v_direct_benefit.data + __pyx_t_12 * __pyx_v_direct_benefit.strides[0]) )) + __pyx_t_13)) )))) + ((*((float *) ( /* dim=1 */ ((char *) (((float *) ( /* dim=0 */ (__pyx_v_social_benefit.data + __pyx_t_16 * __pyx_v_social_benefit.strides[0]) )) + __pyx_t_15)) ))) * (*((float *) ( /* dim=1 */ ((char *) (((float *) ( /* dim=0 */ (__pyx_v_average_reciprocal_response_from_not_masking.data + __pyx_t_18 * __pyx_v_average_reciprocal_response_from_not_masking.strides[0]) )) + __pyx_t_17)) )))));
 
       /* "tribal_masking_computational_core.pyx":54
  *             utility_from_not_masking = -1 * direct_benefit[r, c] + social_benefit[r, c] * average_reciprocal_response_from_not_masking[r, c]
@@ -3170,8 +3347,8 @@ static __Pyx_memviewslice __pyx_f_33tribal_masking_computational_core_spatial_ex
  *                 masking_choice[r, c] = 1
  *             else:
  */
-      __pyx_t_23 = ((__pyx_v_utility_from_masking > __pyx_v_utility_from_not_masking) != 0);
-      if (__pyx_t_23) {
+      __pyx_t_24 = ((__pyx_v_utility_from_masking > __pyx_v_utility_from_not_masking) != 0);
+      if (__pyx_t_24) {
 
         /* "tribal_masking_computational_core.pyx":55
  * 
@@ -3180,11 +3357,22 @@ static __Pyx_memviewslice __pyx_f_33tribal_masking_computational_core_spatial_ex
  *             else:
  *                 masking_choice[r, c] = -1
  */
-        __pyx_t_16 = __pyx_v_r;
-        __pyx_t_17 = __pyx_v_c;
-        if (__pyx_t_16 < 0) __pyx_t_16 += __pyx_v_masking_choice.shape[0];
-        if (__pyx_t_17 < 0) __pyx_t_17 += __pyx_v_masking_choice.shape[1];
-        *((float *) ( /* dim=1 */ ((char *) (((float *) ( /* dim=0 */ (__pyx_v_masking_choice.data + __pyx_t_16 * __pyx_v_masking_choice.strides[0]) )) + __pyx_t_17)) )) = 1.0;
+        __pyx_t_17 = __pyx_v_r;
+        __pyx_t_18 = __pyx_v_c;
+        __pyx_t_14 = -1;
+        if (__pyx_t_17 < 0) {
+          __pyx_t_17 += __pyx_v_masking_choice.shape[0];
+          if (unlikely(__pyx_t_17 < 0)) __pyx_t_14 = 0;
+        } else if (unlikely(__pyx_t_17 >= __pyx_v_masking_choice.shape[0])) __pyx_t_14 = 0;
+        if (__pyx_t_18 < 0) {
+          __pyx_t_18 += __pyx_v_masking_choice.shape[1];
+          if (unlikely(__pyx_t_18 < 0)) __pyx_t_14 = 1;
+        } else if (unlikely(__pyx_t_18 >= __pyx_v_masking_choice.shape[1])) __pyx_t_14 = 1;
+        if (unlikely(__pyx_t_14 != -1)) {
+          __Pyx_RaiseBufferIndexError(__pyx_t_14);
+          __PYX_ERR(0, 55, __pyx_L1_error)
+        }
+        *((float *) ( /* dim=1 */ ((char *) (((float *) ( /* dim=0 */ (__pyx_v_masking_choice.data + __pyx_t_17 * __pyx_v_masking_choice.strides[0]) )) + __pyx_t_18)) )) = 1.0;
 
         /* "tribal_masking_computational_core.pyx":54
  *             utility_from_not_masking = -1 * direct_benefit[r, c] + social_benefit[r, c] * average_reciprocal_response_from_not_masking[r, c]
@@ -3204,11 +3392,22 @@ static __Pyx_memviewslice __pyx_f_33tribal_masking_computational_core_spatial_ex
  *     return masking_choice
  */
       /*else*/ {
-        __pyx_t_17 = __pyx_v_r;
-        __pyx_t_16 = __pyx_v_c;
-        if (__pyx_t_17 < 0) __pyx_t_17 += __pyx_v_masking_choice.shape[0];
-        if (__pyx_t_16 < 0) __pyx_t_16 += __pyx_v_masking_choice.shape[1];
-        *((float *) ( /* dim=1 */ ((char *) (((float *) ( /* dim=0 */ (__pyx_v_masking_choice.data + __pyx_t_17 * __pyx_v_masking_choice.strides[0]) )) + __pyx_t_16)) )) = -1.0;
+        __pyx_t_18 = __pyx_v_r;
+        __pyx_t_17 = __pyx_v_c;
+        __pyx_t_14 = -1;
+        if (__pyx_t_18 < 0) {
+          __pyx_t_18 += __pyx_v_masking_choice.shape[0];
+          if (unlikely(__pyx_t_18 < 0)) __pyx_t_14 = 0;
+        } else if (unlikely(__pyx_t_18 >= __pyx_v_masking_choice.shape[0])) __pyx_t_14 = 0;
+        if (__pyx_t_17 < 0) {
+          __pyx_t_17 += __pyx_v_masking_choice.shape[1];
+          if (unlikely(__pyx_t_17 < 0)) __pyx_t_14 = 1;
+        } else if (unlikely(__pyx_t_17 >= __pyx_v_masking_choice.shape[1])) __pyx_t_14 = 1;
+        if (unlikely(__pyx_t_14 != -1)) {
+          __Pyx_RaiseBufferIndexError(__pyx_t_14);
+          __PYX_ERR(0, 57, __pyx_L1_error)
+        }
+        *((float *) ( /* dim=1 */ ((char *) (((float *) ( /* dim=0 */ (__pyx_v_masking_choice.data + __pyx_t_18 * __pyx_v_masking_choice.strides[0]) )) + __pyx_t_17)) )) = -1.0;
       }
       __pyx_L14:;
     }
@@ -3226,7 +3425,7 @@ static __Pyx_memviewslice __pyx_f_33tribal_masking_computational_core_spatial_ex
   goto __pyx_L0;
 
   /* "tribal_masking_computational_core.pyx":25
- * @cython.boundscheck(False)
+ * @cython.boundscheck(True)
  * @cython.wraparound(True)
  * cpdef float[::, ::1] spatial_externality_game(float[::, ::1] direct_benefit, float[::, ::1] social_benefit, float[::, ::1] reciprocal_response):             # <<<<<<<<<<<<<<
  *     cdef long n_rows = direct_benefit.shape[0]
@@ -22977,6 +23176,12 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_Call(PyObject *func, PyObject *arg
 }
 #endif
 
+/* BufferIndexError */
+static void __Pyx_RaiseBufferIndexError(int axis) {
+  PyErr_Format(PyExc_IndexError,
+     "Out of bounds on buffer access (axis %d)", axis);
+}
+
 /* MemviewSliceInit */
 static int
 __Pyx_init_memviewslice(struct __pyx_memoryview_obj *memview,
@@ -23852,12 +24057,6 @@ static PyObject *__Pyx_PyDict_GetItem(PyObject *d, PyObject* key) {
     return value;
 }
 #endif
-
-/* BufferIndexError */
-  static void __Pyx_RaiseBufferIndexError(int axis) {
-  PyErr_Format(PyExc_IndexError,
-     "Out of bounds on buffer access (axis %d)", axis);
-}
 
 /* BytesEquals */
   static CYTHON_INLINE int __Pyx_PyBytes_Equals(PyObject* s1, PyObject* s2, int equals) {
