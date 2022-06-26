@@ -2415,6 +2415,7 @@ static const char __pyx_k_strided_and_direct[] = "<strided and direct>";
 static const char __pyx_k_neighborhood_radius[] = "neighborhood_radius";
 static const char __pyx_k_reciprocal_response[] = "reciprocal_response";
 static const char __pyx_k_reporting_threshold[] = "reporting_threshold";
+static const char __pyx_k_update_model_arrays[] = "update_model_arrays";
 static const char __pyx_k_strided_and_indirect[] = "<strided and indirect>";
 static const char __pyx_k_unoccupied_locations[] = "unoccupied_locations";
 static const char __pyx_k_utility_from_masking[] = "utility_from_masking";
@@ -2450,7 +2451,6 @@ static const char __pyx_k_average_reciprocal_response_from[] = "average_reciproc
 static const char __pyx_k_got_differing_extents_in_dimensi[] = "got differing extents in dimension %d (got %d and %d)";
 static const char __pyx_k_no_default___reduce___due_to_non[] = "no default __reduce__ due to non-trivial __cinit__";
 static const char __pyx_k_numpy_core_umath_failed_to_impor[] = "numpy.core.umath failed to import";
-static const char __pyx_k_spatial_segregation_and_external[] = "spatial_segregation_and_externality";
 static const char __pyx_k_sum_reciprocal_response_from_mas[] = "sum_reciprocal_response_from_masking";
 static const char __pyx_k_tribal_masking_computational_cor[] = "tribal_masking_computational_core.pyx";
 static const char __pyx_k_unable_to_allocate_shape_and_str[] = "unable to allocate shape and strides.";
@@ -2607,7 +2607,6 @@ static PyObject *__pyx_n_s_setstate_cython;
 static PyObject *__pyx_n_s_shape;
 static PyObject *__pyx_n_s_size;
 static PyObject *__pyx_n_s_social_benefit;
-static PyObject *__pyx_n_s_spatial_segregation_and_external;
 static PyObject *__pyx_n_s_start;
 static PyObject *__pyx_n_s_step;
 static PyObject *__pyx_n_s_stop;
@@ -2631,11 +2630,12 @@ static PyObject *__pyx_n_s_unoccupied_locations;
 static PyObject *__pyx_n_s_unoccupied_map;
 static PyObject *__pyx_n_s_unpack;
 static PyObject *__pyx_n_s_update;
+static PyObject *__pyx_n_s_update_model_arrays;
 static PyObject *__pyx_n_s_utility_from_masking;
 static PyObject *__pyx_n_s_utility_from_not_masking;
 static PyObject *__pyx_n_s_zeros;
 static PyObject *__pyx_pf_33tribal_masking_computational_core_spatial_externality_game(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_direct_benefit, __Pyx_memviewslice __pyx_v_social_benefit, __Pyx_memviewslice __pyx_v_reciprocal_response); /* proto */
-static PyObject *__pyx_pf_33tribal_masking_computational_core_2spatial_segregation_and_externality(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_model, long __pyx_v_n_iterations); /* proto */
+static PyObject *__pyx_pf_33tribal_masking_computational_core_2update_model_arrays(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_model, long __pyx_v_n_iterations); /* proto */
 static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __pyx_array_obj *__pyx_v_self, PyObject *__pyx_v_shape, Py_ssize_t __pyx_v_itemsize, PyObject *__pyx_v_format, PyObject *__pyx_v_mode, int __pyx_v_allocate_buffer); /* proto */
 static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array_2__getbuffer__(struct __pyx_array_obj *__pyx_v_self, Py_buffer *__pyx_v_info, int __pyx_v_flags); /* proto */
 static void __pyx_array___pyx_pf_15View_dot_MemoryView_5array_4__dealloc__(struct __pyx_array_obj *__pyx_v_self); /* proto */
@@ -3374,16 +3374,16 @@ static PyObject *__pyx_pf_33tribal_masking_computational_core_spatial_externalit
 /* "tribal_masking_computational_core.pyx":65
  * @cython.boundscheck(True)
  * @cython.wraparound(True)
- * def spatial_segregation_and_externality(model, long n_iterations):             # <<<<<<<<<<<<<<
+ * def update_model_arrays(model, long n_iterations):             # <<<<<<<<<<<<<<
  * 
  *     # Extract model attributes to c-objects
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_33tribal_masking_computational_core_3spatial_segregation_and_externality(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_33tribal_masking_computational_core_2spatial_segregation_and_externality[] = "spatial_segregation_and_externality(model, long n_iterations)";
-static PyMethodDef __pyx_mdef_33tribal_masking_computational_core_3spatial_segregation_and_externality = {"spatial_segregation_and_externality", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_33tribal_masking_computational_core_3spatial_segregation_and_externality, METH_VARARGS|METH_KEYWORDS, __pyx_doc_33tribal_masking_computational_core_2spatial_segregation_and_externality};
-static PyObject *__pyx_pw_33tribal_masking_computational_core_3spatial_segregation_and_externality(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_33tribal_masking_computational_core_3update_model_arrays(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_33tribal_masking_computational_core_2update_model_arrays[] = "update_model_arrays(model, long n_iterations)";
+static PyMethodDef __pyx_mdef_33tribal_masking_computational_core_3update_model_arrays = {"update_model_arrays", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_33tribal_masking_computational_core_3update_model_arrays, METH_VARARGS|METH_KEYWORDS, __pyx_doc_33tribal_masking_computational_core_2update_model_arrays};
+static PyObject *__pyx_pw_33tribal_masking_computational_core_3update_model_arrays(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_model = 0;
   long __pyx_v_n_iterations;
   int __pyx_lineno = 0;
@@ -3391,7 +3391,7 @@ static PyObject *__pyx_pw_33tribal_masking_computational_core_3spatial_segregati
   int __pyx_clineno = 0;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("spatial_segregation_and_externality (wrapper)", 0);
+  __Pyx_RefNannySetupContext("update_model_arrays (wrapper)", 0);
   {
     static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_model,&__pyx_n_s_n_iterations,0};
     PyObject* values[2] = {0,0};
@@ -3415,11 +3415,11 @@ static PyObject *__pyx_pw_33tribal_masking_computational_core_3spatial_segregati
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_n_iterations)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("spatial_segregation_and_externality", 1, 2, 2, 1); __PYX_ERR(0, 65, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("update_model_arrays", 1, 2, 2, 1); __PYX_ERR(0, 65, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "spatial_segregation_and_externality") < 0)) __PYX_ERR(0, 65, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "update_model_arrays") < 0)) __PYX_ERR(0, 65, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -3432,20 +3432,20 @@ static PyObject *__pyx_pw_33tribal_masking_computational_core_3spatial_segregati
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("spatial_segregation_and_externality", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 65, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("update_model_arrays", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 65, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("tribal_masking_computational_core.spatial_segregation_and_externality", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tribal_masking_computational_core.update_model_arrays", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_33tribal_masking_computational_core_2spatial_segregation_and_externality(__pyx_self, __pyx_v_model, __pyx_v_n_iterations);
+  __pyx_r = __pyx_pf_33tribal_masking_computational_core_2update_model_arrays(__pyx_self, __pyx_v_model, __pyx_v_n_iterations);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_33tribal_masking_computational_core_2spatial_segregation_and_externality(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_model, long __pyx_v_n_iterations) {
+static PyObject *__pyx_pf_33tribal_masking_computational_core_2update_model_arrays(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_model, long __pyx_v_n_iterations) {
   PyArrayObject *__pyx_v_agent_ids = 0;
   PyArrayObject *__pyx_v_agent_locations = 0;
   PyArrayObject *__pyx_v_unoccupied_locations = 0;
@@ -3587,7 +3587,7 @@ static PyObject *__pyx_pf_33tribal_masking_computational_core_2spatial_segregati
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
-  __Pyx_RefNannySetupContext("spatial_segregation_and_externality", 0);
+  __Pyx_RefNannySetupContext("update_model_arrays", 0);
   __pyx_pybuffer_agent_ids.pybuffer.buf = NULL;
   __pyx_pybuffer_agent_ids.refcount = 0;
   __pyx_pybuffernd_agent_ids.data = NULL;
@@ -6753,7 +6753,7 @@ static PyObject *__pyx_pf_33tribal_masking_computational_core_2spatial_segregati
   /* "tribal_masking_computational_core.pyx":65
  * @cython.boundscheck(True)
  * @cython.wraparound(True)
- * def spatial_segregation_and_externality(model, long n_iterations):             # <<<<<<<<<<<<<<
+ * def update_model_arrays(model, long n_iterations):             # <<<<<<<<<<<<<<
  * 
  *     # Extract model attributes to c-objects
  */
@@ -6791,7 +6791,7 @@ static PyObject *__pyx_pf_33tribal_masking_computational_core_2spatial_segregati
     __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_unoccupied_locations.rcbuffer->pybuffer);
     __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_unoccupied_map.rcbuffer->pybuffer);
   __Pyx_ErrRestore(__pyx_type, __pyx_value, __pyx_tb);}
-  __Pyx_AddTraceback("tribal_masking_computational_core.spatial_segregation_and_externality", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tribal_masking_computational_core.update_model_arrays", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   goto __pyx_L2;
   __pyx_L0:;
@@ -21789,7 +21789,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_shape, __pyx_k_shape, sizeof(__pyx_k_shape), 0, 0, 1, 1},
   {&__pyx_n_s_size, __pyx_k_size, sizeof(__pyx_k_size), 0, 0, 1, 1},
   {&__pyx_n_s_social_benefit, __pyx_k_social_benefit, sizeof(__pyx_k_social_benefit), 0, 0, 1, 1},
-  {&__pyx_n_s_spatial_segregation_and_external, __pyx_k_spatial_segregation_and_external, sizeof(__pyx_k_spatial_segregation_and_external), 0, 0, 1, 1},
   {&__pyx_n_s_start, __pyx_k_start, sizeof(__pyx_k_start), 0, 0, 1, 1},
   {&__pyx_n_s_step, __pyx_k_step, sizeof(__pyx_k_step), 0, 0, 1, 1},
   {&__pyx_n_s_stop, __pyx_k_stop, sizeof(__pyx_k_stop), 0, 0, 1, 1},
@@ -21813,6 +21812,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_unoccupied_map, __pyx_k_unoccupied_map, sizeof(__pyx_k_unoccupied_map), 0, 0, 1, 1},
   {&__pyx_n_s_unpack, __pyx_k_unpack, sizeof(__pyx_k_unpack), 0, 0, 1, 1},
   {&__pyx_n_s_update, __pyx_k_update, sizeof(__pyx_k_update), 0, 0, 1, 1},
+  {&__pyx_n_s_update_model_arrays, __pyx_k_update_model_arrays, sizeof(__pyx_k_update_model_arrays), 0, 0, 1, 1},
   {&__pyx_n_s_utility_from_masking, __pyx_k_utility_from_masking, sizeof(__pyx_k_utility_from_masking), 0, 0, 1, 1},
   {&__pyx_n_s_utility_from_not_masking, __pyx_k_utility_from_not_masking, sizeof(__pyx_k_utility_from_not_masking), 0, 0, 1, 1},
   {&__pyx_n_s_zeros, __pyx_k_zeros, sizeof(__pyx_k_zeros), 0, 0, 1, 1},
@@ -22054,14 +22054,14 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "tribal_masking_computational_core.pyx":65
  * @cython.boundscheck(True)
  * @cython.wraparound(True)
- * def spatial_segregation_and_externality(model, long n_iterations):             # <<<<<<<<<<<<<<
+ * def update_model_arrays(model, long n_iterations):             # <<<<<<<<<<<<<<
  * 
  *     # Extract model attributes to c-objects
  */
   __pyx_tuple__21 = PyTuple_Pack(57, __pyx_n_s_model, __pyx_n_s_n_iterations, __pyx_n_s_agent_ids, __pyx_n_s_agent_locations, __pyx_n_s_unoccupied_locations, __pyx_n_s_agent_types, __pyx_n_s_agent_ids_map, __pyx_n_s_types_map, __pyx_n_s_d_map, __pyx_n_s_s_map, __pyx_n_s_r_map, __pyx_n_s_b_map, __pyx_n_s_masking_choice, __pyx_n_s_infection_status, __pyx_n_s_immunity_status, __pyx_n_s_immunity_efficacy, __pyx_n_s_infection_duration, __pyx_n_s_immunity_decay, __pyx_n_s_segregation_threshold, __pyx_n_s_infection_probability, __pyx_n_s_masking_efficacy, __pyx_n_s_neighborhood_radius, __pyx_n_s_game_type, __pyx_n_s_reporting_threshold, __pyx_n_s_n_agents, __pyx_n_s_n_rows, __pyx_n_s_n_cols, __pyx_n_s_n_cells, __pyx_n_s_iteration_counter, __pyx_n_s_random_unoccupied_index, __pyx_n_s_decision_to_move, __pyx_n_s_r, __pyx_n_s_c, __pyx_n_s_rd, __pyx_n_s_cd, __pyx_n_s_neighborhood_r, __pyx_n_s_neighborhood_c, __pyx_n_s_new_r, __pyx_n_s_new_c, __pyx_n_s_sum_mismatch, __pyx_n_s_mean_mismatch, __pyx_n_s_sum_match, __pyx_n_s_mean_match, __pyx_n_s_sum_metric, __pyx_n_s_mean_metric, __pyx_n_s_n_in_neighborhood, __pyx_n_s_utility_from_masking, __pyx_n_s_utility_from_not_masking, __pyx_n_s_current_infection_probability, __pyx_n_s_occupied_map, __pyx_n_s_unoccupied_map, __pyx_n_s_mean_similarity_metric_map, __pyx_n_s_average_reciprocal_response_from, __pyx_n_s_sum_reciprocal_response_from_mas, __pyx_n_s_n_unoccupied_cells, __pyx_n_s_n_changers, __pyx_n_s_agent_id); if (unlikely(!__pyx_tuple__21)) __PYX_ERR(0, 65, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__21);
   __Pyx_GIVEREF(__pyx_tuple__21);
-  __pyx_codeobj__22 = (PyObject*)__Pyx_PyCode_New(2, 0, 57, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__21, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tribal_masking_computational_cor, __pyx_n_s_spatial_segregation_and_external, 65, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__22)) __PYX_ERR(0, 65, __pyx_L1_error)
+  __pyx_codeobj__22 = (PyObject*)__Pyx_PyCode_New(2, 0, 57, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__21, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tribal_masking_computational_cor, __pyx_n_s_update_model_arrays, 65, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__22)) __PYX_ERR(0, 65, __pyx_L1_error)
 
   /* "View.MemoryView":286
  *         return self.name
@@ -22653,13 +22653,13 @@ if (!__Pyx_RefNanny) {
   /* "tribal_masking_computational_core.pyx":65
  * @cython.boundscheck(True)
  * @cython.wraparound(True)
- * def spatial_segregation_and_externality(model, long n_iterations):             # <<<<<<<<<<<<<<
+ * def update_model_arrays(model, long n_iterations):             # <<<<<<<<<<<<<<
  * 
  *     # Extract model attributes to c-objects
  */
-  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_33tribal_masking_computational_core_3spatial_segregation_and_externality, NULL, __pyx_n_s_tribal_masking_computational_cor_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 65, __pyx_L1_error)
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_33tribal_masking_computational_core_3update_model_arrays, NULL, __pyx_n_s_tribal_masking_computational_cor_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 65, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_spatial_segregation_and_external, __pyx_t_2) < 0) __PYX_ERR(0, 65, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_update_model_arrays, __pyx_t_2) < 0) __PYX_ERR(0, 65, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "tribal_masking_computational_core.pyx":1

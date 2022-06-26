@@ -20,7 +20,7 @@ if recompile_cython == True:
     if returned:
         raise NameError('Cythonization failed.')
 
-import tribal_masking_functions
+import tribal_masking_model_classes
 import tribal_masking_computational_core
 import tribal_masking_tasks
 import tribal_masking_visualization
@@ -150,8 +150,9 @@ def combined_game_with_policies_and_infection(p):
     if p.run_this:
         # START HERE: Consider having additional plotting functions that incorporate line graphs over time, export to CSV, export to gif, and
         # run just a single step.
-        model = tribal_masking_functions.tribal_masking_model((150, 150))
+        model = tribal_masking_model_classes.tribal_masking_model(p.world_shape)
 
-        tribal_masking_visualization.plot_combined_game_interactive_infections(model)
+        view = tribal_masking_visualization.tribal_masking_view(model)
+        # tribal_masking_visualization.plot_combined_game_interactive_infections(model)
 
 

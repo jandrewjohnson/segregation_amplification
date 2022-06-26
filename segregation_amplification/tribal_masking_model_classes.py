@@ -7,7 +7,7 @@ from numpy.core.defchararray import upper
 import scipy as sp
 from scipy.stats import truncnorm
 import hazelbean as hb
-
+import time
 
 import tribal_masking_computational_core
 import collections
@@ -189,7 +189,14 @@ class tribal_masking_model(object):
         a = np.where(agent_ids_map.flatten() > 0, a, 0.)
         return a.reshape(spatial_shape).astype(np.float32)
 
+    def update(self, n_iterations):
+        # Send the model and the n iterations to the cython core. This will update the model arrays for n_iteration number of steps and is very fast.
+        start = time.time()
+        tribal_masking_computational_core.update_model_arrays(self, n_iterations)
+        compute_time_per_iteration = (time.time() - start) / n_iterations
+        compute_time_per_agent = compute_time_per_iteration / self.n_agents
 
+        print('Compute time per iteration: ' + str(compute_time_per_iteration))
 
 
 
