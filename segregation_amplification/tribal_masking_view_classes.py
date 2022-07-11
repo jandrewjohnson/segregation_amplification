@@ -167,7 +167,7 @@ class tribal_masking_view(object):
 
     def launch_timer(self):
         print('launching timer')
-        self.timer = self.fig.canvas.new_timer(interval=1)
+        self.timer = self.fig.canvas.new_timer(interval=.001)
         self.timer.add_callback(self.update_function)
         self.timer.start()
 
