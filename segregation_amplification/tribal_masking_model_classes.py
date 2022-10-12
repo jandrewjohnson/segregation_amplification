@@ -12,7 +12,7 @@ import time
 import tribal_masking_computational_core
 import collections
 
-class tribal_masking_model(object):
+class TribalMaskingModel(object):
 
     def __init__(self, spatial_shape=None):
         if spatial_shape is None:
@@ -178,6 +178,15 @@ class tribal_masking_model(object):
         self.masking_choice = np.zeros(self.spatial_shape, dtype=np.float32)
         self.infection_status = np.zeros(self.spatial_shape, dtype=np.float32)
         self.immunity_status = np.zeros(self.spatial_shape, dtype=np.float32)
+        
+        initialize_with_random_infections = 1
+        if initialize_with_random_infections:
+            
+            # Infect the first few agents
+            n_to_infect = 25
+            for i in range(n_to_infect):
+                self.infection_status[self.shuffled_positional_indices[i, 0], self.shuffled_positional_indices[i, 1]] = 1
+                
         self.immunity_efficacy = np.zeros(self.spatial_shape, dtype=np.float32)
 
     def initialize_reporting_variables(self):
@@ -196,7 +205,7 @@ class tribal_masking_model(object):
         compute_time_per_iteration = (time.time() - start) / n_iterations
         compute_time_per_agent = compute_time_per_iteration / self.n_agents
 
-        print('Compute time per iteration: ' + str(compute_time_per_iteration))
+        # print('Compute time per iteration: ' + str(compute_time_per_iteration))
 
 
 

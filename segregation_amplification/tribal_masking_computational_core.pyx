@@ -63,6 +63,7 @@ cpdef float[::, ::1] spatial_externality_game(float[::, ::1] direct_benefit, flo
 @cython.boundscheck(True)
 @cython.wraparound(True)
 def update_model_arrays(model, long n_iterations):
+    
 
     # Extract model attributes to c-objects
     cdef np.ndarray[np.int32_t, ndim=1] agent_ids = model.agent_ids

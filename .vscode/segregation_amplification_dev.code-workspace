@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "..\\..\\..\\gtap_invest\\gtap_invest_dev\\gtap_invest"
+		},
+		{
+			"path": "..\\..\\..\\..\\hazelbean\\hazelbean_dev"
+		}
+	],
+	"settings": {},
+	"python.analysis.extraPaths": ["C:\\Users\\jajohns\\Files\\Research\\hazelbean\\hazelbean_dev", "C:\\Users\\jajohns\\Files\\Research\\hazelbean\\hazelbean_dev\\hazelbean"],
+	
+}

@@ -1,6 +1,7 @@
 import os
 import sys
 import random
+import pandas as pd
 import numpy as np
 from numpy.core import multiarray
 from numpy.core.defchararray import upper
@@ -15,13 +16,17 @@ from hazelbean import visualization
 # Recompile cython file if needed.
 recompile_cython = True
 if recompile_cython == True:
-    cython_command = "python compile_cython_functions.py build_ext -i clean"  #
+    old_cwd = os.getcwd()
+    b = os.listdir(old_cwd)
+    conda_executable_path = "C://Miniconda3//envs//research2022d//python.exe"
+    cython_command = conda_executable_path + " compile_cython_functions.py build_ext -i clean"  #
+    print('Running cythonization command: ' + cython_command)
     returned = os.system(cython_command)
-    if returned:
-        raise NameError('Cythonization failed.')
+    # if returned:
+        # raise NameError('Cythonization failed.')
 
 import tribal_masking_model_classes
-import tribal_masking_computational_core
+# import tribal_masking_computational_core
 import tribal_masking_tasks
 import tribal_masking_view_classes
 
@@ -144,15 +149,163 @@ def aspatial_externality_game(p):
         cbar = fig.colorbar(im, label='Percent masking')
         fig.savefig(os.path.join(p.cur_dir, 'aspatial_reciprocal.png'))
 
+def manual_model_call(p):
+    
+    if p.run_this:     
+        
+        # Initialize parameters
+        n_iterations_per_step = 1
+        n_runs = 20
+        n_steps = 400
+        
+        # Check to see if we need to save simulation outputs to CSV if they don't exist.
+        n_infections_path = os.path.join(p.cur_dir, 'n_infections.csv')
+        if not hb.path_exists(n_infections_path):
+            
+            # Store the results of each run in a column of a numpy array (for later use in Pandas or plotting)
+            n_infections_by_run_array = np.zeros((n_steps, n_runs), dtype=np.int64)
+            
+            # Iterate through each run
+            for run_id in range(n_runs):
 
+                # (re)-create the model. If you don't call this on each run_id, it will just pickup where the model object last was.
+                model = tribal_masking_model_classes.TribalMaskingModel(p.world_shape)
+                
+                # For this plot, we are going to just set the infection manually. But the commented out line shows how you could modify it.
+                model.params['infection_probability'] = 0.009  # Default is .005
+                # model.params['infection_probability'] = 0.0025 * (run_id + 1) # Default is .005
+                
+                # Run the model for n_steps           
+                for i in range(n_steps):
+                    
+                    # On each step, update the model through n_iterations
+                    model.update(n_iterations_per_step)
+                    
+                    # Count how many are infected at this stage
+                    n_infected = float(np.sum(np.where(model.infection_status > 0, 1.0, 0.0)))
+                    
+                    # Write the result to the output array. If needed, this could be optimized through writing a cython multi-model loop call.
+                    n_infections_by_run_array[i, run_id] = n_infected
+                    
+                    print('n_infected: ' + str(n_infected) + ' on step ' + str(i))
+
+            # Convert array to a df
+            df = pd.DataFrame(data=n_infections_by_run_array, columns=list(range(n_runs)))
+
+            # Write the df to a CSV
+            df.to_csv(n_infections_path, index=False)  
+             
+        else: # Results do exist so just load them.
+            df = pd.read_csv(n_infections_path)
+            n_infections_by_run_array = df.values
+        
+        # Check if n_infections png exists. Skip if it does.
+        n_infections_plot_path = os.path.join(p.cur_dir, 'n_infections.png')    
+        if not hb.path_exists(n_infections_plot_path):
+            
+            # iterate through each n_runs to plot to a scatter array as a different color.
+            for i in range(n_runs):
+                to_plot = n_infections_by_run_array[:, i]
+                plt.scatter(list(range(n_steps)), to_plot, s=50, alpha=.05, edgecolors='none')
+                
+            plt.savefig(n_infections_plot_path)
+
+
+def testing_different_infection_probabilities(p):
+    """THIS IS BROKEN because I didn't figure out how to create a scatters' legend."""
+    if p.run_this:     
+        
+        # Initialize parameters
+        n_iterations_per_step = 1
+        n_runs = 20
+        n_steps = 400
+        
+        # Check to see if we need to save simulation outputs to CSV if they don't exist.
+        n_infections_path = os.path.join(p.cur_dir, 'n_infections_by_infectiousness.csv')
+        if not hb.path_exists(n_infections_path):
+            
+            # Store the results of each run in a column of a numpy array (for later use in Pandas or plotting)
+            n_infections_by_run_array = np.zeros((n_steps, n_runs), dtype=np.int64)
+            infection_rates = []
+            
+            # Iterate through each run
+            for run_id in range(n_runs):
+
+                # (re)-create the model. If you don't call this on each run_id, it will just pickup where the model object last was.
+                model = tribal_masking_model_classes.TribalMaskingModel(p.world_shape)
+                
+                # For this plot, we are going to just set the infection manually. But the commented out line shows how you could modify it.
+                model.params['infection_probability'] = 0.0025 * ((run_id + 1)/4) # Default is .005
+                
+                # Save the parameters to a list for later plotting
+                infection_rates.append(model.params['infection_probability'])
+                
+                # Run the model for n_steps           
+                for i in range(n_steps):
+                    
+                    # On each step, update the model through n_iterations
+                    model.update(n_iterations_per_step)
+                    
+                    # Count how many are infected at this stage
+                    n_infected = float(np.sum(np.where(model.infection_status > 0, 1.0, 0.0)))
+                    
+                    # Write the result to the output array. If needed, this could be optimized through writing a cython multi-model loop call.
+                    n_infections_by_run_array[i, run_id] = n_infected
+                    
+                    print('n_infected: ' + str(n_infected) + ' on step ' + str(i))
+
+            # Convert array to a df
+            df = pd.DataFrame(data=n_infections_by_run_array, columns=list(range(n_runs)))
+                        
+            # Write the df to a CSV
+            df.to_csv(n_infections_path, index=False)  
+             
+        else: # Results do exist so just load them.
+            df = pd.read_csv(n_infections_path)
+            n_infections_by_run_array = df.values
+            infection_rates = [0.0025 * (int(i) + 1) for i in list(df.columns)]
+        
+        # Check if n_infections png exists. Skip if it does.
+        n_infections_plot_path = os.path.join(p.cur_dir, 'n_infections_by_infectiousness.png')    
+        if not hb.path_exists(n_infections_plot_path) or 1:
+            
+            # iterate through each n_runs to plot to a scatter array as a different color.
+            fig, ax = plt.subplots()
+            scatters = []
+            for i in range(n_runs):
+                to_plot = n_infections_by_run_array[:, i]
+                
+                
+                scatter = ax.scatter(list(range(n_steps)), to_plot, s=50, alpha=.05, edgecolors='none')                
+                scatters.append(scatter)
+                
+            legend = ax.legend(*scatters, loc="lower left", title="Classes")
+            # ax.add_artist(legend)
+        
+            
+            # produce a legend with a cross section of sizes from the scatter
+            # handles, labels = scatter.legend_elements(prop="sizes", alpha=0.6)
+            # legend = ax.legend(handles, labels, loc="upper right", title="Sizes")
+
+
+            plt.savefig(n_infections_plot_path)
+
+def effect_of_segregation_on_masking_behavior(p):
+    
+    if p.run_this:    
+
+        # Create the model
+        model = tribal_masking_model_classes.TribalMaskingModel(p.world_shape)    
+        print('model', model)
+            
 def combined_game_with_policies_and_infection(p):
 
     if p.run_this:
 
         # Create the model
-        model = tribal_masking_model_classes.tribal_masking_model(p.world_shape)
+        model = tribal_masking_model_classes.TribalMaskingModel(p.world_shape)
 
         # Assign and launch a viewer of the model.
-        view = tribal_masking_view_classes.tribal_masking_view(model)
+        view = tribal_masking_view_classes.TribalMaskingView(model)
 
 
