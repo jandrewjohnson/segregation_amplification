@@ -14,8 +14,8 @@ p.world_shape = (100, 100)
 
 aspatial_externality_game_task = p.add_task(tribal_masking_tasks.aspatial_externality_game,                                           run=0)
 manual_model_call_task = p.add_task(tribal_masking_tasks.manual_model_call,                                                           run=0)
-testing_different_infection_probabilities_task = p.add_task(tribal_masking_tasks.testing_different_infection_probabilities,           run=0)
-effect_of_segregation_on_masking_behavior_task = p.add_task(tribal_masking_tasks.effect_of_segregation_on_masking_behavior,           run=1)
+testing_different_infection_probabilities_task = p.add_task(tribal_masking_tasks.testing_different_infection_probabilities,           run=1)
+effect_of_segregation_on_masking_behavior_task = p.add_task(tribal_masking_tasks.effect_of_segregation_on_masking_behavior,           run=0)
 combined_game_with_policies_and_infection_task = p.add_task(tribal_masking_tasks.combined_game_with_policies_and_infection,           run=0)
 
 p.execute()

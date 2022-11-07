@@ -9,6 +9,7 @@ from matplotlib.widgets import Slider, Button, RadioButtons, TextBox
 from matplotlib import colors
 import time
 from scipy import stats
+import mpl_toolkits
 
 # import tribal_masking_functions
 import tribal_masking_computational_core
@@ -299,6 +300,224 @@ class TribalMaskingView(object):
                 self.model.parameter_maps['d'][r, c]  += .5
             if event.key == 'e':
                 self.model.parameter_maps['d'][r, c] -= .5
+
+def generate_simple_masking_and_types_plot(model):
+    
+    # Operate on a copy so that we can modify values for plotting purposes
+    array1 = model.masking_choice
+    array2 = model.types_map
+    
+    # Hackish way to make it conform to masking notation.
+    array2[array2==1] = -1
+    array2[array2==2] = 1
+    
+    # fig = plt.figure(dpi=200, frameon=True)
+    fig = plt.figure(dpi=200, frameon=True, figsize=(6, 3))
+    ax1 = fig.add_subplot(121)
+    ax2 = fig.add_subplot(122)
+    
+    colors_dict_1 = {
+        -1: "purple", 
+        0: "white",
+        1: "green", 
+        }       
+    labels1 = np.array(["No\nmask", "Vacant", "Mask"])
+    len_lab = len(labels1)
+    norm_bins = np.sort([*colors_dict_1.keys()]) + 0.5
+    norm_bins = np.insert(norm_bins, 0, np.min(norm_bins) - 1.0)
+    diff = norm_bins[1:] - norm_bins[:-1]
+    tickz = norm_bins[:-1] + diff / 2   
+    norm = matplotlib.colors.BoundaryNorm(norm_bins, len_lab, clip=True)
+    
+    cm1 = matplotlib.colors.ListedColormap([colors_dict_1[x] for x in colors_dict_1.keys()])
+    im1 = ax1.imshow(array1, cmap=cm1, norm=norm, interpolation='nearest') 
+    cb1 = fig.colorbar(im1, ax=ax1, format=None, ticks=tickz,  shrink=.49)
+    cb1.ax.set_yticklabels(labels1)
+    ax1.set_title('Masking choice')
+    ax1.axis('off')
+    
+    colors_dict_2 = {
+        -1: "red",
+        0: "white",
+        1: "blue",
+        } 
+    labels2 = np.array(['Red type', 'Vacant', 'Blue type', ])
+    len_lab = len(labels2)
+    norm_bins = np.sort([*colors_dict_2.keys()]) + 0.5
+    norm_bins = np.insert(norm_bins, 0, np.min(norm_bins) - 1.0)
+    diff = norm_bins[1:] - norm_bins[:-1]
+    tickz = norm_bins[:-1] + diff / 2   
+    norm = matplotlib.colors.BoundaryNorm(norm_bins, len_lab, clip=True)
+    
+    cm2 = matplotlib.colors.ListedColormap([colors_dict_2[x] for x in colors_dict_2.keys()])
+    im2 = ax2.imshow(array2, cmap=cm2, norm=norm, interpolation='nearest') 
+    cb2 = fig.colorbar(im2, ax=ax2, format=None, ticks=tickz,  shrink=.49)
+    cb2.ax.set_yticklabels(labels2)
+    ax2.set_title('Political type')
+    ax2.axis('off')        
+
+    # percent_masked = np.sum(np.where(array1 == 1, 1, 0)) / model.n_agents
+    # percent_masked_annotation = ax1.annotate('Percent masked: ' + str(hb.round_significant_n(percent_masked, 4)), xy=(0.01, 0.95), xycoords='figure fraction')
+
+    fig.tight_layout()
+   
+    return fig
+
+
+def generate_time_plot_of_segregation_convergence_plot(model):
+    fig = plt.figure(dpi=200, frameon=True)
+    # fig = plt.figure(dpi=200, frameon=True, figsize=(6, 3))
+    
+    # Define which time steps to plot. Currently is 20 long for a 4x5 array.
+    n_iterations_to_plot = [0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 14, 16, 19, 22, 25, 28, 35, 40, 50, 100]
+    
+    # Add arrays at desired steps
+    last_iteration = 0   
+    n_plot_rows = 4
+    n_plot_cols = 5         
+    
+    colors_dict = {
+            -1: "red",
+            0: "white",
+            1: "blue",
+            } 
+                
+    # import matplotlib.gridspec
+    gs = matplotlib.gridspec.GridSpec(n_plot_rows, n_plot_cols+1, height_ratios=[1,1,1,1], width_ratios=[1,1,1,1,1,.5])
+    gs.update(left=0.0, right=1.0, bottom=0.0, top=1.0, wspace=0.02, hspace=0.02)
+    # gs.update(left=0.05, right=0.95, bottom=0.08, top=0.93, wspace=0.02, hspace=0.03) 
+    cb_axes = []
+    for i in range(n_plot_rows):        
+        for j in range(n_plot_cols):
+            
+            current_spot = i * n_plot_cols + j
+            local_n_iteration = n_iterations_to_plot[current_spot]
+            
+            ax = plt.subplot(gs[i, j])
+                    
+            current_n_iterations = local_n_iteration - last_iteration
+            last_iteration = local_n_iteration
+            model.update(current_n_iterations)             
+            
+            current_array = np.copy(model.types_map)
+            
+            # Hackish way to make it conform to masking notation.
+            current_array[current_array==1] = -1
+            current_array[current_array==2] = 1       
+
+            labels = np.array(['Red type', 'Vacant', 'Blue type', ])
+            len_lab = len(labels)
+            norm_bins = np.sort([*colors_dict.keys()]) + 0.5
+            norm_bins = np.insert(norm_bins, 0, np.min(norm_bins) - 1.0)
+            diff = norm_bins[1:] - norm_bins[:-1]
+            tickz = norm_bins[:-1] + diff / 2   
+            norm = matplotlib.colors.BoundaryNorm(norm_bins, len_lab, clip=True)
+            
+            cm = matplotlib.colors.ListedColormap([colors_dict[x] for x in colors_dict.keys()])
+            im = ax.imshow(current_array, cmap=cm, norm=norm, interpolation='nearest') 
+            
+            # Here I found using ax.text gave more power than just annotate.
+            t = ax.text(0.05, 0.85, str(local_n_iteration), transform=ax.transAxes, fontsize=7)
+            t.set_bbox(dict(facecolor='white', alpha=0.8, linewidth=0))
+            
+            ax.axis('off')   
+
+    # Here it gets tricky. Make the cb_axes from teh right most slice of GS elements.
+    cb_axes = plt.subplot(gs[:, 5])
+    cb_axes.axis('off')     
+    
+    # Assign the colorbar to the cb axes, not sure if shrink does anything
+    cb = fig.colorbar(im, ax=cb_axes, format=None, ticks=tickz, location='left', shrink=.6,)
+    
+    # Add the tick labels
+    cb.ax.set_yticklabels(labels)
+    
+    # The ticks default to the left if you set the location equal to the left. Thus flip again where the yaxis cb tick locations are.
+    cb.ax.yaxis.set_ticks_position('right')
+    cb.ax.yaxis.set_label_position('right')
+    
+    fig.tight_layout()
+   
+    return fig
+        
+
+
+def generate_time_plot_of_masking_convergence_plot(model):
+    fig = plt.figure(dpi=200, frameon=True)
+    # fig = plt.figure(dpi=200, frameon=True, figsize=(6, 3))
+    
+    # Define which time steps to plot. Currently is 20 long for a 4x5 array.
+    n_iterations_to_plot = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 20, 30, 50, 75, 100]
+    
+    # Add arrays at desired steps
+    last_iteration = 0   
+    n_plot_rows = 4
+    n_plot_cols = 5         
+    
+    colors_dict = {
+        -1: "purple", 
+        0: "white",
+        1: "green", 
+        }       
+    
+    # import matplotlib.gridspec
+    gs = matplotlib.gridspec.GridSpec(n_plot_rows, n_plot_cols+1, height_ratios=[1,1,1,1], width_ratios=[1,1,1,1,1,.5])
+    gs.update(left=0.0, right=1.0, bottom=0.0, top=1.0, wspace=0.02, hspace=0.02)
+    # gs.update(left=0.05, right=0.95, bottom=0.08, top=0.93, wspace=0.02, hspace=0.03) 
+    cb_axes = []
+    for i in range(n_plot_rows):        
+        for j in range(n_plot_cols):
+            
+            current_spot = i * n_plot_cols + j
+            local_n_iteration = n_iterations_to_plot[current_spot]
+            
+            ax = plt.subplot(gs[i, j])
+                    
+            current_n_iterations = local_n_iteration - last_iteration
+            last_iteration = local_n_iteration
+            model.update(current_n_iterations)             
+            
+            current_array = np.copy(model.masking_choice)
+            
+            # # Hackish way to make it conform to masking notation.
+            # current_array[current_array==1] = -1
+            # current_array[current_array==2] = 1       
+
+            labels = np.array(["No\nmask", "Vacant", "Mask"])
+            len_lab = len(labels)
+            norm_bins = np.sort([*colors_dict.keys()]) + 0.5
+            norm_bins = np.insert(norm_bins, 0, np.min(norm_bins) - 1.0)
+            diff = norm_bins[1:] - norm_bins[:-1]
+            tickz = norm_bins[:-1] + diff / 2   
+            norm = matplotlib.colors.BoundaryNorm(norm_bins, len_lab, clip=True)
+            
+            cm = matplotlib.colors.ListedColormap([colors_dict[x] for x in colors_dict.keys()])
+            im = ax.imshow(current_array, cmap=cm, norm=norm, interpolation='nearest') 
+            
+            # Here I found using ax.text gave more power than just annotate.
+            t = ax.text(0.05, 0.85, str(local_n_iteration), transform=ax.transAxes, fontsize=7)
+            t.set_bbox(dict(facecolor='white', alpha=0.8, linewidth=0))
+            
+            ax.axis('off')   
+
+    # Here it gets tricky. Make the cb_axes from teh right most slice of GS elements.
+    cb_axes = plt.subplot(gs[:, 5])
+    cb_axes.axis('off')     
+    
+    # Assign the colorbar to the cb axes, not sure if shrink does anything
+    cb = fig.colorbar(im, ax=cb_axes, format=None, ticks=tickz, location='left', shrink=.6,)
+    
+    # Add the tick labels
+    cb.ax.set_yticklabels(labels)
+    
+    # The ticks default to the left if you set the location equal to the left. Thus flip again where the yaxis cb tick locations are.
+    cb.ax.yaxis.set_ticks_position('right')
+    cb.ax.yaxis.set_label_position('right')
+    
+    fig.tight_layout()
+   
+    return fig
+        
 
 
 def plot_combined_game_interactive_infections(model):

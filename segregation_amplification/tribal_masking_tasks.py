@@ -14,7 +14,7 @@ import hazelbean as hb
 from hazelbean import visualization
 
 # Recompile cython file if needed.
-recompile_cython = True
+recompile_cython = False
 if recompile_cython == True:
     old_cwd = os.getcwd()
     b = os.listdir(old_cwd)
@@ -206,9 +206,9 @@ def manual_model_call(p):
             # iterate through each n_runs to plot to a scatter array as a different color.
             for i in range(n_runs):
                 to_plot = n_infections_by_run_array[:, i]
-                plt.scatter(list(range(n_steps)), to_plot, s=50, alpha=.05, edgecolors='none')
+                plt.scatter(list(range(n_steps)), to_plot, s=25, c='blue', alpha=.05, edgecolors='none')
                 
-            plt.savefig(n_infections_plot_path)
+            plt.savefig(n_infections_plot_path, bbox_inches='tight')
 
 
 def testing_different_infection_probabilities(p):
@@ -217,7 +217,7 @@ def testing_different_infection_probabilities(p):
         
         # Initialize parameters
         n_iterations_per_step = 1
-        n_runs = 20
+        n_runs = 10
         n_steps = 400
         
         # Check to see if we need to save simulation outputs to CSV if they don't exist.
@@ -235,7 +235,7 @@ def testing_different_infection_probabilities(p):
                 model = tribal_masking_model_classes.TribalMaskingModel(p.world_shape)
                 
                 # For this plot, we are going to just set the infection manually. But the commented out line shows how you could modify it.
-                model.params['infection_probability'] = 0.0025 * ((run_id + 1)/4) # Default is .005
+                model.params['infection_probability'] = 0.01 * ((run_id + 1)/5) # Default is .005
                 
                 # Save the parameters to a list for later plotting
                 infection_rates.append(model.params['infection_probability'])
@@ -254,6 +254,8 @@ def testing_different_infection_probabilities(p):
                     
                     print('n_infected: ' + str(n_infected) + ' on step ' + str(i))
 
+
+           
             # Convert array to a df
             df = pd.DataFrame(data=n_infections_by_run_array, columns=list(range(n_runs)))
                         
@@ -264,7 +266,7 @@ def testing_different_infection_probabilities(p):
             df = pd.read_csv(n_infections_path)
             n_infections_by_run_array = df.values
             infection_rates = [0.0025 * (int(i) + 1) for i in list(df.columns)]
-        
+            
         # Check if n_infections png exists. Skip if it does.
         n_infections_plot_path = os.path.join(p.cur_dir, 'n_infections_by_infectiousness.png')    
         if not hb.path_exists(n_infections_plot_path) or 1:
@@ -273,29 +275,78 @@ def testing_different_infection_probabilities(p):
             fig, ax = plt.subplots()
             scatters = []
             for i in range(n_runs):
-                to_plot = n_infections_by_run_array[:, i]
+                to_plot = n_infections_by_run_array[:, i] / 7500 * 100
                 
-                
-                scatter = ax.scatter(list(range(n_steps)), to_plot, s=50, alpha=.05, edgecolors='none')                
+                infectiousness = infection_rates[i]
+                scatter = ax.plot(list(range(n_steps)), to_plot, alpha=.9, label=hb.round_significant_n(infectiousness, 2))                
+                # scatter = ax.scatter(list(range(n_steps)), to_plot, s=10, alpha=.9, edgecolors='none', label=infectiousness)                
                 scatters.append(scatter)
                 
-            legend = ax.legend(*scatters, loc="lower left", title="Classes")
+            # legend = ax.legend(loc="lower left", title="Classes")
             # ax.add_artist(legend)
         
+            legend = ax.legend()
+            legend.set_title("Infectiousness", prop = {'size':10})
             
+            ax.set_xlabel('Days')
+            ax.set_ylabel('Percent infected')
+            
+            # ax.axis('off')   
             # produce a legend with a cross section of sizes from the scatter
             # handles, labels = scatter.legend_elements(prop="sizes", alpha=0.6)
             # legend = ax.legend(handles, labels, loc="upper right", title="Sizes")
 
 
-            plt.savefig(n_infections_plot_path)
+            plt.savefig(n_infections_plot_path, bbox_inches='tight')
 
 def effect_of_segregation_on_masking_behavior(p):
     
     if p.run_this:    
 
-        # Create the model
-        model = tribal_masking_model_classes.TribalMaskingModel(p.world_shape)    
+        fig_path = os.path.join(p.cur_dir, 'simple_masking_and_types_plot.png')
+        if not hb.path_exists(fig_path):
+        
+            print('Creating fig at ' + os.path.abspath(fig_path))
+            
+            # Create the model
+            hb.timer('Create model.')
+            
+            # world_shape = (1000, 1000)
+            world_shape = (150, 150)
+            
+            model = tribal_masking_model_classes.TribalMaskingModel(world_shape)    
+            
+            n_iterations = 40
+            model.update(n_iterations) 
+            hb.timer('Model finished.')
+            
+            fig = tribal_masking_view_classes.generate_simple_masking_and_types_plot(model)
+            fig.savefig(fig_path, bbox_inches='tight')
+
+        fig_path = os.path.join(p.cur_dir, 'time_plot_of_segregation_convergence.png')
+        if not hb.path_exists(fig_path):        
+            print('Creating fig at ' + os.path.abspath(fig_path))
+            
+            # Create the model
+            world_shape = (150, 150)            
+            model = tribal_masking_model_classes.TribalMaskingModel(world_shape)    
+                            
+            fig = tribal_masking_view_classes.generate_time_plot_of_segregation_convergence_plot(model)
+            fig.show()
+            fig.savefig(fig_path, bbox_inches='tight')
+
+        fig_path = os.path.join(p.cur_dir, 'time_plot_of_masking_convergence.png')
+        if not hb.path_exists(fig_path):        
+            print('Creating fig at ' + os.path.abspath(fig_path))
+            
+            # Create the model
+            world_shape = (150, 150)            
+            model = tribal_masking_model_classes.TribalMaskingModel(world_shape)    
+                            
+            fig = tribal_masking_view_classes.generate_time_plot_of_masking_convergence_plot(model)
+            # fig.show()
+            fig.savefig(fig_path, bbox_inches='tight')
+
         print('model', model)
             
 def combined_game_with_policies_and_infection(p):

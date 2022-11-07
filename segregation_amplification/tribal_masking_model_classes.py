@@ -202,8 +202,8 @@ class TribalMaskingModel(object):
         # Send the model and the n iterations to the cython core. This will update the model arrays for n_iteration number of steps and is very fast.
         start = time.time()
         tribal_masking_computational_core.update_model_arrays(self, n_iterations)
-        compute_time_per_iteration = (time.time() - start) / n_iterations
-        compute_time_per_agent = compute_time_per_iteration / self.n_agents
+        # compute_time_per_iteration = (time.time() - start) / n_iterations
+        # compute_time_per_agent = compute_time_per_iteration / self.n_agents
 
         # print('Compute time per iteration: ' + str(compute_time_per_iteration))
 
