@@ -2,15 +2,18 @@ import cython
 import numpy as np
 cimport numpy as np
 
+# NumPy Python-level types
 DTYPEUINT8 = np.uint8
 DTYPEBYTE = np.byte
-DTYPEINT = np.int
+DTYPEINT = np.int32
 DTYPEINT64 = np.int64
-DTYPELONG = np.long
+DTYPELONG = np.longlong
 DTYPEFLOAT32 = np.float32
 DTYPEFLOAT64 = np.float64
+
+# NumPy C-level types (corrected)
 ctypedef np.uint8_t DTYPEUINT8_t
-ctypedef np.int_t DTYPEINT_t
+ctypedef np.int32_t DTYPEINT_t     # Changed from np.int_t to np.int32_t
 ctypedef np.int64_t DTYPEINT64_t
 ctypedef np.float32_t DTYPEFLOAT32_t
 ctypedef np.float64_t DTYPEFLOAT64_t
@@ -64,7 +67,6 @@ cpdef float[::, ::1] spatial_externality_game(float[::, ::1] direct_benefit, flo
 @cython.wraparound(True)
 def update_model_arrays(model, long n_iterations):
     
-
     # Extract model attributes to c-objects
     cdef np.ndarray[np.int32_t, ndim=1] agent_ids = model.agent_ids
     cdef np.ndarray[np.int32_t, ndim=2] agent_locations = model.agent_locations
@@ -82,7 +84,7 @@ def update_model_arrays(model, long n_iterations):
     cdef np.ndarray[np.float32_t, ndim=2] immunity_status = model.immunity_status
     cdef np.ndarray[np.float32_t, ndim=2] immunity_efficacy = model.immunity_efficacy
 
-    cdef float  infection_duration = model.params['infection_duration']
+    cdef float infection_duration = model.params['infection_duration']
     cdef float immunity_decay = model.params['immunity_decay']
 
     cdef float segregation_threshold = model.params['segregation_threshold']
@@ -105,22 +107,14 @@ def update_model_arrays(model, long n_iterations):
     cdef float utility_from_masking, utility_from_not_masking, current_infection_probability
 
     # This is all wrong. START HERE. should be initialized.
-    cdef np.ndarray[np.int32_t, ndim=2] occupied_map = np.zeros([n_rows, n_cols], dtype=DTYPELONG)
-    cdef np.ndarray[np.int32_t, ndim=2] unoccupied_map = np.zeros([n_rows, n_cols], dtype=DTYPELONG)
+    cdef np.ndarray[np.int32_t, ndim=2] occupied_map = np.zeros([n_rows, n_cols], dtype=DTYPEINT)
+    cdef np.ndarray[np.int32_t, ndim=2] unoccupied_map = np.zeros([n_rows, n_cols], dtype=DTYPEINT)
     cdef np.ndarray[np.float32_t, ndim=2] mean_similarity_metric_map = np.zeros([n_rows, n_cols], dtype=DTYPEFLOAT32)
     cdef np.ndarray[np.float32_t, ndim=2] average_reciprocal_response_from_masking = np.zeros([n_rows, n_cols], dtype=DTYPEFLOAT32)
     cdef np.ndarray[np.float32_t, ndim=2] sum_reciprocal_response_from_masking = np.zeros([n_rows, n_cols], dtype=DTYPEFLOAT32)
-    # cdef float[::, ::1] utility_from_masking = np.zeros([n_rows, n_cols], dtype=DTYPEFLOAT32)
-    # cdef float[::, ::1] utility_from_not_masking = np.zeros([n_rows, n_cols], dtype=DTYPEFLOAT32)
-    # cdef float[::, ::1] utility_from_not_masking = np.zeros([n_rows, n_cols], dtype=DTYPEFLOAT32)
-    # cdef float[::, ::1] masking_choice = np.zeros([n_rows, n_cols], dtype=DTYPEFLOAT32)
-
-
 
     cdef long n_unoccupied_cells = n_cells - n_agents
-
     cdef long n_changers = 0
-
     n_in_neighborhood = <float> (neighborhood_radius * 2 + 1) ** 2 - 1
 
     for iteration_counter in range(n_iterations):
@@ -244,8 +238,6 @@ def update_model_arrays(model, long n_iterations):
 
             average_reciprocal_response_from_masking[r, c] = sum_reciprocal_response_from_masking[r, c] / n_in_neighborhood
 
-
-
             utility_from_masking = d_map[r, c] + s_map[r, c] * average_reciprocal_response_from_masking[r, c] # Note implicit masking_choice as * 1
             utility_from_not_masking = -1 * d_map[r, c] + -1 * s_map[r, c] * average_reciprocal_response_from_masking[r, c]
 
@@ -273,4 +265,35 @@ def update_model_arrays(model, long n_iterations):
     model.immunity_status = immunity_status
     model.mean_similarity_metric_map = mean_similarity_metric_map
     model.parameter_maps['average_reciprocal_response_from_masking'] = average_reciprocal_response_from_masking
+    
+    return n_changers
 
+# Add other functions from the paste.txt file here as needed...
+# For example:
+
+@cython.cdivision(True)
+@cython.embedsignature(True)
+@cython.boundscheck(True)
+@cython.wraparound(True)
+def spatial_segregation_externality_game(
+    np.ndarray[np.int32_t, ndim=1] agent_ids,
+    np.ndarray[np.int32_t, ndim=2] agent_locations,
+    np.ndarray[np.int32_t, ndim=2] unoccupied_locations,
+    np.ndarray[np.int32_t, ndim=1] agent_types,
+    np.ndarray[np.int32_t, ndim=2] agent_ids_map,
+    np.ndarray[np.int32_t, ndim=2] types_map,
+    float threshold, 
+    long neighborhood_radius,
+    str game_type,
+    np.ndarray[np.float32_t, ndim=2] d,
+    np.ndarray[np.float32_t, ndim=2] s,
+    np.ndarray[np.float32_t, ndim=2] r,
+    np.ndarray[np.float32_t, ndim=2] masking_choice,
+    np.ndarray[np.float32_t, ndim=2] average_reciprocal_response_from_masking,
+    np.ndarray[np.float32_t, ndim=2] mean_similarity_metric_map,
+    long reporting_threshold=0):
+    
+    # Implementation would go here
+    # This is a placeholder for the function signature
+    
+    return 0  # Return number of changers

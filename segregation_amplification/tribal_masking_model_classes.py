@@ -77,18 +77,18 @@ class TribalMaskingModel(object):
         self.n_cols = self.spatial_shape[1]
 
         # Save row and col ids as two new parameters so that we can quickly look up paraeters my spatial location OR agent id.
-        self.row_ids = np.arange(self.n_rows)
-        self.col_ids = np.arange(self.n_cols)
+        self.row_ids = np.arange(self.n_rows, dtype=np.int32)
+        self.col_ids = np.arange(self.n_cols, dtype=np.int32)
 
         # Number of agents is a function then of the size of the space and the proportion filled, rounded down and inted.
         self.n_cells = self.n_rows * self.n_cols
         self.n_agents = int(np.floor(self.n_cells * self.proportion_filled))
 
         # Keep track of all the agents via IDs
-        self.agent_ids = np.arange(0, self.n_agents).astype(np.int)
+        self.agent_ids = np.arange(0, self.n_agents).astype(np.int32)
 
         # positional_indices records the 2-length r, c of each agent grid-cell based on their r, c.
-        self.positional_indices = np.empty((self.n_rows, self.n_cols, 2), dtype=int)
+        self.positional_indices = np.empty((self.n_rows, self.n_cols, 2), dtype=np.int32)
         self.positional_indices[:, :, 0] = self.row_ids[:, None]
         self.positional_indices[:, :, 1] = self.col_ids
 
@@ -135,15 +135,15 @@ class TribalMaskingModel(object):
         # 1 1-dim for performance and save everything as 2dim?
 
         # agent ids and types are initialized as maps.
-        self.agent_ids_map = np.zeros((self.n_rows, self.n_cols), dtype=np.int)
+        self.agent_ids_map = np.zeros((self.n_rows, self.n_cols), dtype=np.int32)
         for i in range(self.n_agents): # THESE LOOPS might become a performance chokepoint for cythonization.
             self.agent_ids_map[self.shuffled_positional_indices[i, 0], self.shuffled_positional_indices[i, 1]] = i
 
     def initialize_agent_types(self):
 
         # Agent types are 1 = liberal, 2 = conservative. 0 is left blank to reflect absence of agents.
-        self.agent_types = np.random.randint(1, 3, size=self.n_agents).astype(np.int)
-        self.types_map = np.zeros((self.n_rows, self.n_cols), dtype=np.int)
+        self.agent_types = np.random.randint(1, 3, size=self.n_agents).astype(np.int32)
+        self.types_map = np.zeros((self.n_rows, self.n_cols), dtype=np.int32)
         for i in range(self.n_agents):
             self.types_map[self.shuffled_positional_indices[i, 0], self.shuffled_positional_indices[i, 1]] = self.agent_types[i]
 
