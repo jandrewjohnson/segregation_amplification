@@ -128,3 +128,5 @@ dmypy.json
 # Pyre type checker
 .pyre/
 .idea/*
+segregation_amplification/tribal_masking_computational_core.c
+segregation_amplification/tribal_masking_computational_core.c

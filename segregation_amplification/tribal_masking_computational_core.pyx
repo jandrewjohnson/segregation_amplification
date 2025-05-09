@@ -6,11 +6,11 @@ DTYPEUINT8 = np.uint8
 DTYPEBYTE = np.byte
 DTYPEINT = np.int64
 DTYPEINT64 = np.int64
-DTYPELONG = np.int64
+DTYPELONG = np.int32
 DTYPEFLOAT32 = np.float32
 DTYPEFLOAT64 = np.float64
 ctypedef np.uint8_t DTYPEUINT8_t
-ctypedef np.int_t DTYPEINT_t
+ctypedef np.int32_t DTYPEINT_t
 ctypedef np.int64_t DTYPEINT64_t
 ctypedef np.float32_t DTYPEFLOAT32_t
 ctypedef np.float64_t DTYPEFLOAT64_t

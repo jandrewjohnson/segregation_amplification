@@ -30,7 +30,7 @@ DTYPEINT64 = np.int64
 DTYPELONG = np.long
 DTYPEFLOAT32 = np.float32
 DTYPEFLOAT64 = np.float64
-ctypedef np.int_t DTYPEINT_t
+ctypedef np.int32_t DTYPEINT_t
 ctypedef np.int64_t DTYPEINT64_t
 ctypedef np.float32_t DTYPEFLOAT32_t
 ctypedef np.float64_t DTYPEFLOAT64_t
@@ -76,7 +76,7 @@ def naive_upsample(np.ndarray[np.float64_t, ndim=2] coarse_res_array, long long 
     return output_array
 
 
-def naive_upsample_byte(np.ndarray[np.int_t, ndim=2] coarse_res_array, long long upsample_factor):
+def naive_upsample_byte(np.ndarray[np.int32_t, ndim=2] coarse_res_array, long long upsample_factor):
     """Return an array that makes a n by m array into a n * upsample_factor by m * upsample_factor with the n by m value put into each higher-res cell. """
     cdef long long num_coarse_rows = coarse_res_array.shape[0]
     cdef long long num_coarse_cols = coarse_res_array.shape[1]
@@ -84,7 +84,7 @@ def naive_upsample_byte(np.ndarray[np.int_t, ndim=2] coarse_res_array, long long
     cdef long long num_fine_cols = num_coarse_cols * upsample_factor
     cdef long long cr, cc
 
-    cdef np.ndarray[np.int_t, ndim=2] output_array = np.empty([num_fine_rows, num_fine_cols], dtype=np.int64)
+    cdef np.ndarray[np.int32_t, ndim=2] output_array = np.empty([num_fine_rows, num_fine_cols], dtype=np.int64)
 
     for cr in range(num_coarse_rows):
         for cc in range(num_coarse_cols):
@@ -111,7 +111,7 @@ DTYPELONG = np.long
 DTYPEFLOAT32 = np.float32
 DTYPEFLOAT64 = np.float64
 ctypedef np.uint8_t DTYPEUINT8_t
-ctypedef np.int_t DTYPEINT_t
+ctypedef np.int32_t DTYPEINT_t
 ctypedef np.int64_t DTYPEINT64_t
 ctypedef np.float32_t DTYPEFLOAT32_t
 ctypedef np.float64_t DTYPEFLOAT64_t

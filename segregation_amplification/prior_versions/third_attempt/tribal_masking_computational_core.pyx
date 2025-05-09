@@ -10,7 +10,7 @@ DTYPELONG = np.long
 DTYPEFLOAT32 = np.float32
 DTYPEFLOAT64 = np.float64
 ctypedef np.uint8_t DTYPEUINT8_t
-ctypedef np.int_t DTYPEINT_t
+ctypedef np.int32_t DTYPEINT_t
 ctypedef np.int64_t DTYPEINT64_t
 ctypedef np.float32_t DTYPEFLOAT32_t
 ctypedef np.float64_t DTYPEFLOAT64_t
@@ -545,7 +545,7 @@ def spatial_segregation_only(model, long n_iterations):
  #                         ndarray[np.float64_t, ndim=2] sector_yields not None, # n_sectors by [r, c] yields per km ranked in same order as sector_dpi_ranked_keys_3d_array
  #                         ndarray[np.int64_t, ndim=1] sector_num_changes not None, # 1 by n_sectors array of how many changes total occur in that sector, according to length of that sectors ranked_keys
  #                         ndarray[np.float64_t, ndim=2] available_land not None, # n_rows by n_cols spatial array of 0-1 land availability. Is based on human modification index.
- #                         ndarray[np.int_t, ndim=2] country_ids not None, # n_r
+ #                         ndarray[np.int32_t, ndim=2] country_ids not None, # n_r
     #cdef np.ndarray[np.int64_t, ndim=1] sector_step_sizes = np.zeros(num_sectors, dtype=np.int64)
 ## FROM OPTIMIZATION RESULTS, this is much slower than above.
 # @cython.boundscheck(False)

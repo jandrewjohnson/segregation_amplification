@@ -347,7 +347,7 @@ def effect_of_segregation_on_masking_behavior(p):
             # fig.show()
             fig.savefig(fig_path, bbox_inches='tight')
 
-        print('model', model)
+        # print('model', model)
             
 def combined_game_with_policies_and_infection(p):
 
