@@ -4,7 +4,7 @@ cimport numpy as np
 
 DTYPEUINT8 = np.uint8
 DTYPEBYTE = np.byte
-DTYPEINT = np.int
+DTYPEINT = np.int64
 DTYPEINT64 = np.int64
 DTYPELONG = np.long
 DTYPEFLOAT32 = np.float32

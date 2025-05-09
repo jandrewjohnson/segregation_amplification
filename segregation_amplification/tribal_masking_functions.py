@@ -66,7 +66,7 @@ class tribal_masking_model(object):
         self.n_agents = int(np.floor(self.n_cells * self.proportion_filled))
 
         # Keep track of all the agents via IDs
-        self.agent_ids = np.arange(0, self.n_agents).astype(np.int)
+        self.agent_ids = np.arange(0, self.n_agents).astype(np.int64)
 
         # positional_indices records the 2-length r, c of each agent grid-cell based on their r, c.
         self.positional_indices = np.empty((self.n_rows, self.n_cols, 2), dtype=int)
@@ -116,15 +116,15 @@ class tribal_masking_model(object):
         # 1 1-dim for performance and save everything as 2dim?
 
         # agent ids and types are initialized as maps.
-        self.agent_ids_map = np.zeros((self.n_rows, self.n_cols), dtype=np.int)
+        self.agent_ids_map = np.zeros((self.n_rows, self.n_cols), dtype=np.int64)
         for i in range(self.n_agents): # THESE LOOPS might become a performance chokepoint for cythonization.
             self.agent_ids_map[self.shuffled_positional_indices[i, 0], self.shuffled_positional_indices[i, 1]] = i
 
     def initialize_agent_types(self):
 
         # Agent types are 1 = liberal, 2 = conservative. 0 is left blank to reflect absence of agents.
-        self.agent_types = np.random.randint(1, 3, size=self.n_agents).astype(np.int)
-        self.types_map = np.zeros((self.n_rows, self.n_cols), dtype=np.int)
+        self.agent_types = np.random.randint(1, 3, size=self.n_agents).astype(np.int64)
+        self.types_map = np.zeros((self.n_rows, self.n_cols), dtype=np.int64)
         for i in range(self.n_agents):
             self.types_map[self.shuffled_positional_indices[i, 0], self.shuffled_positional_indices[i, 1]] = self.agent_types[i]
 
@@ -176,7 +176,7 @@ def initialize_agents(spatial_shape, proportion_filled, type_bias, params):
     n_cells = spatial_shape[0] * spatial_shape[1]
 
     # Keep track of all the agents via IDs
-    agent_ids = np.arange(0, n_agents).astype(np.int)
+    agent_ids = np.arange(0, n_agents).astype(np.int64)
 
     # positional_indices records the 2-length r, c of each agent grid-cell based on their r, c.
     positional_indices = np.empty((spatial_shape[0], spatial_shape[1], 2), dtype=int)
@@ -202,11 +202,11 @@ def initialize_agents(spatial_shape, proportion_filled, type_bias, params):
     unoccupied_locations = shuffled_positional_indices[n_agents:]
 
     # Agent types are 1 = liberal, 2 = conservative. 0 is left blank to reflect absence of agents.
-    agent_types = np.random.randint(1, 3, size=n_agents).astype(np.int)
+    agent_types = np.random.randint(1, 3, size=n_agents).astype(np.int64)
 
     # agent ids and types are initialized as maps.
-    agent_ids_map = np.zeros((spatial_shape[0], spatial_shape[1]), dtype=np.int)
-    types_map = np.zeros((spatial_shape[0], spatial_shape[1]), dtype=np.int)
+    agent_ids_map = np.zeros((spatial_shape[0], spatial_shape[1]), dtype=np.int64)
+    types_map = np.zeros((spatial_shape[0], spatial_shape[1]), dtype=np.int64)
     for i in range(n_agents):
         agent_ids_map[shuffled_positional_indices[i, 0], shuffled_positional_indices[i, 1]] = i
         types_map[shuffled_positional_indices[i, 0], shuffled_positional_indices[i, 1]] = agent_types[i]
@@ -242,7 +242,7 @@ def get_masking_choice_full_resolve(spatial_shape, proportion_filled, game_type,
     average_reciprocal_response_from_masking = np.zeros(spatial_shape).astype(np.float32)
     agent_ids, agent_locations, unoccupied_locations, agent_types, agent_ids_map, types_map, d, s, r = \
         initialize_agents(spatial_shape, proportion_filled, type_bias, params)
-    neighborhood_radius = np.int(neighborhood_radius)
+    neighborhood_radius = np.int64(neighborhood_radius)
     n_iterations = 150
     for i in range(n_iterations):
 
@@ -268,7 +268,7 @@ def get_initial_masking_choice_time_variant(threshold, spatial_shape, proportion
 
     # INITIALIZE AGENTS
     agent_ids, agent_locations, unoccupied_locations, agent_types, agent_ids_map, types_map, d, s, r = initialize_agents(spatial_shape, proportion_filled, type_bias, params)
-    neighborhood_radius = np.int(neighborhood_radius)
+    neighborhood_radius = np.int64(neighborhood_radius)
 
     for i in range(n_iterations):
         n_changed = tribal_masking_computational_core.spatial_segregation_externality_game(
@@ -292,7 +292,7 @@ def get_masking_choice_time_variant(spatial_shape, proportion_filled, game_type,
     average_reciprocal_response_from_masking = np.zeros(spatial_shape).astype(np.float32)
 
     agent_ids, agent_locations, unoccupied_locations, agent_types, agent_ids_map, types_map, d, s, r = initialize_agents(spatial_shape, proportion_filled, type_bias, params)
-    neighborhood_radius = np.int(neighborhood_radius)
+    neighborhood_radius = np.int64(neighborhood_radius)
     n_iterations = 30
     for i in range(n_iterations):
         n_changed = tribal_masking_computational_core.spatial_segregation_externality_game(
@@ -337,7 +337,7 @@ def get_initial_masking_choice_object_oriented(model):
     # INITIALIZE AGENTS
     hb.timer('Starting to initialize agents.')
     agent_ids, agent_locations, unoccupied_locations, agent_types, agent_ids_map, types_map, d, s, r = initialize_agents(spatial_shape, proportion_filled, type_bias, params)
-    neighborhood_radius = np.int(neighborhood_radius)
+    neighborhood_radius = np.int64(neighborhood_radius)
 
     hb.timer('Finished initialize agents, starting to iterate.')
     for i in range(n_iterations):

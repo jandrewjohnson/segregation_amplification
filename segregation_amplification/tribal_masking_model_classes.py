@@ -27,10 +27,10 @@ class TribalMaskingModel(object):
 
 
         self.initial_params = {
-            'segregation_threshold': 0.55,
-            'neighborhood_radius': 3,
+            'segregation_threshold': 0.55, # tau
+            'neighborhood_radius': 3, #G
             'infection_probability': 0.005,
-            'masking_efficacy': 0.35,
+            'masking_efficacy': 0.55,
             'infection_duration': 10,
             'immunity_decay': .99,
             'd': -0.25,
@@ -85,7 +85,7 @@ class TribalMaskingModel(object):
         self.n_agents = int(np.floor(self.n_cells * self.proportion_filled))
 
         # Keep track of all the agents via IDs
-        self.agent_ids = np.arange(0, self.n_agents).astype(np.int)
+        self.agent_ids = np.arange(0, self.n_agents).astype(np.int64)
 
         # positional_indices records the 2-length r, c of each agent grid-cell based on their r, c.
         self.positional_indices = np.empty((self.n_rows, self.n_cols, 2), dtype=int)
@@ -135,15 +135,15 @@ class TribalMaskingModel(object):
         # 1 1-dim for performance and save everything as 2dim?
 
         # agent ids and types are initialized as maps.
-        self.agent_ids_map = np.zeros((self.n_rows, self.n_cols), dtype=np.int)
+        self.agent_ids_map = np.zeros((self.n_rows, self.n_cols), dtype=np.int64)
         for i in range(self.n_agents): # THESE LOOPS might become a performance chokepoint for cythonization.
             self.agent_ids_map[self.shuffled_positional_indices[i, 0], self.shuffled_positional_indices[i, 1]] = i
 
     def initialize_agent_types(self):
 
         # Agent types are 1 = liberal, 2 = conservative. 0 is left blank to reflect absence of agents.
-        self.agent_types = np.random.randint(1, 3, size=self.n_agents).astype(np.int)
-        self.types_map = np.zeros((self.n_rows, self.n_cols), dtype=np.int)
+        self.agent_types = np.random.randint(1, 3, size=self.n_agents).astype(np.int64)
+        self.types_map = np.zeros((self.n_rows, self.n_cols), dtype=np.int64)
         for i in range(self.n_agents):
             self.types_map[self.shuffled_positional_indices[i, 0], self.shuffled_positional_indices[i, 1]] = self.agent_types[i]
 

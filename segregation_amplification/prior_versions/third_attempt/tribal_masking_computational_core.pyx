@@ -4,7 +4,7 @@ cimport numpy as np
 
 DTYPEUINT8 = np.uint8
 DTYPEBYTE = np.byte
-DTYPEINT = np.int
+DTYPEINT = np.int64
 DTYPEINT64 = np.int64
 DTYPELONG = np.long
 DTYPEFLOAT32 = np.float32
@@ -664,8 +664,8 @@ def spatial_segregation_only_non_memview(model, long n_iterations):
     cdef float sum_mismatch, mean_mismatch, sum_match, mean_match, sum_metric, mean_metric, n_in_neighborhood
     cdef float utility_from_masking, utility_from_not_masking
 
-    cdef np.ndarray[np.int32_t, ndim=2] occupied_map = np.zeros([n_rows, n_cols], dtype=np.int32)
-    cdef  np.ndarray[np.int32_t, ndim=2]unoccupied_map = np.zeros([n_rows, n_cols], dtype=np.int32)
+    cdef np.ndarray[np.int32_t, ndim=2] occupied_map = np.zeros([n_rows, n_cols], dtype=np.int64)
+    cdef  np.ndarray[np.int32_t, ndim=2]unoccupied_map = np.zeros([n_rows, n_cols], dtype=np.int64)
     # cdef float[::, ::1] mean_metric_map = np.zeros([n_rows, n_cols], dtype=DTYPEFLOAT32)
 
     cdef long n_unoccupied_cells = n_cells - n_agents

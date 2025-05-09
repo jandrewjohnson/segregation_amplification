@@ -16,6 +16,7 @@ import tribal_masking_computational_core
 import tribal_masking_tasks
 import tribal_masking_model_classes
 
+# matplotlib.use('TkAgg')  # or can use 'TkAgg', whatever you have/prefer or Qt5Agg
 matplotlib.use('Qt5Agg')  # or can use 'TkAgg', whatever you have/prefer or Qt5Agg
 
 class TribalMaskingView(object):
@@ -41,7 +42,7 @@ class TribalMaskingView(object):
         axis_color = 'lightgoldenrodyellow'
 
         self.plot_focused = False
-        self.plot_lines = True
+        self.plot_lines = False
 
         self.fig = plt.figure()
 

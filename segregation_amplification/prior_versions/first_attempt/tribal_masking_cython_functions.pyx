@@ -14,7 +14,7 @@ from numpy cimport ndarray
 import math, time
 
 # DTYPEBYTE = np.byte
-# DTYPEINT = np.int
+# DTYPEINT = np.int64
 # DTYPEINT64 = np.int64
 # DTYPELONG = np.long
 # DTYPEFLOAT32 = np.float32
@@ -25,7 +25,7 @@ import math, time
 # ctypedef np.float64_t DTYPEFLOAT64_t
 
 DTYPEBYTE = np.byte
-DTYPEINT = np.int
+DTYPEINT = np.int64
 DTYPEINT64 = np.int64
 DTYPELONG = np.long
 DTYPEFLOAT32 = np.float32
@@ -84,7 +84,7 @@ def naive_upsample_byte(np.ndarray[np.int_t, ndim=2] coarse_res_array, long long
     cdef long long num_fine_cols = num_coarse_cols * upsample_factor
     cdef long long cr, cc
 
-    cdef np.ndarray[np.int_t, ndim=2] output_array = np.empty([num_fine_rows, num_fine_cols], dtype=np.int)
+    cdef np.ndarray[np.int_t, ndim=2] output_array = np.empty([num_fine_rows, num_fine_cols], dtype=np.int64)
 
     for cr in range(num_coarse_rows):
         for cc in range(num_coarse_cols):
@@ -105,7 +105,7 @@ cimport numpy as np
 
 DTYPEUINT8 = np.uint8
 DTYPEBYTE = np.byte
-DTYPEINT = np.int
+DTYPEINT = np.int64
 DTYPEINT64 = np.int64
 DTYPELONG = np.long
 DTYPEFLOAT32 = np.float32

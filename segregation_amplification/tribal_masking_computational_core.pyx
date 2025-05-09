@@ -4,9 +4,9 @@ cimport numpy as np
 
 DTYPEUINT8 = np.uint8
 DTYPEBYTE = np.byte
-DTYPEINT = np.int
+DTYPEINT = np.int64
 DTYPEINT64 = np.int64
-DTYPELONG = np.long
+DTYPELONG = np.int64
 DTYPEFLOAT32 = np.float32
 DTYPEFLOAT64 = np.float64
 ctypedef np.uint8_t DTYPEUINT8_t

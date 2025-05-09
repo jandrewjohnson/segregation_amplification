@@ -11186,8 +11186,8 @@ static PyObject *__pyx_pf_33tribal_masking_computational_core_10spatial_segregat
   /* "tribal_masking_computational_core.pyx":667
  *     cdef float utility_from_masking, utility_from_not_masking
  * 
- *     cdef np.ndarray[np.int32_t, ndim=2] occupied_map = np.zeros([n_rows, n_cols], dtype=np.int32)             # <<<<<<<<<<<<<<
- *     cdef  np.ndarray[np.int32_t, ndim=2]unoccupied_map = np.zeros([n_rows, n_cols], dtype=np.int32)
+ *     cdef np.ndarray[np.int32_t, ndim=2] occupied_map = np.zeros([n_rows, n_cols], dtype=np.int64)             # <<<<<<<<<<<<<<
+ *     cdef  np.ndarray[np.int32_t, ndim=2]unoccupied_map = np.zeros([n_rows, n_cols], dtype=np.int64)
  *     # cdef float[::, ::1] mean_metric_map = np.zeros([n_rows, n_cols], dtype=DTYPEFLOAT32)
  */
   __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 667, __pyx_L1_error)
@@ -11242,8 +11242,8 @@ static PyObject *__pyx_pf_33tribal_masking_computational_core_10spatial_segregat
 
   /* "tribal_masking_computational_core.pyx":668
  * 
- *     cdef np.ndarray[np.int32_t, ndim=2] occupied_map = np.zeros([n_rows, n_cols], dtype=np.int32)
- *     cdef  np.ndarray[np.int32_t, ndim=2]unoccupied_map = np.zeros([n_rows, n_cols], dtype=np.int32)             # <<<<<<<<<<<<<<
+ *     cdef np.ndarray[np.int32_t, ndim=2] occupied_map = np.zeros([n_rows, n_cols], dtype=np.int64)
+ *     cdef  np.ndarray[np.int32_t, ndim=2]unoccupied_map = np.zeros([n_rows, n_cols], dtype=np.int64)             # <<<<<<<<<<<<<<
  *     # cdef float[::, ::1] mean_metric_map = np.zeros([n_rows, n_cols], dtype=DTYPEFLOAT32)
  * 
  */

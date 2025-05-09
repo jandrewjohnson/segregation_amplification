@@ -358,5 +358,7 @@ def combined_game_with_policies_and_infection(p):
 
         # Assign and launch a viewer of the model.
         view = tribal_masking_view_classes.TribalMaskingView(model)
+        
+        5
 
 

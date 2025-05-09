@@ -25648,7 +25648,7 @@ if (!__Pyx_RefNanny) {
  * 
  * DTYPEUINT8 = np.uint8             # <<<<<<<<<<<<<<
  * DTYPEBYTE = np.byte
- * DTYPEINT = np.int
+ * DTYPEINT = np.int6464
  */
   __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 5, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -25662,7 +25662,7 @@ if (!__Pyx_RefNanny) {
  * 
  * DTYPEUINT8 = np.uint8
  * DTYPEBYTE = np.byte             # <<<<<<<<<<<<<<
- * DTYPEINT = np.int
+ * DTYPEINT = np.int6464
  * DTYPEINT64 = np.int64
  */
   __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 6, __pyx_L1_error)
@@ -25676,7 +25676,7 @@ if (!__Pyx_RefNanny) {
   /* "computational_core.pyx":7
  * DTYPEUINT8 = np.uint8
  * DTYPEBYTE = np.byte
- * DTYPEINT = np.int             # <<<<<<<<<<<<<<
+ * DTYPEINT = np.int6464             # <<<<<<<<<<<<<<
  * DTYPEINT64 = np.int64
  * DTYPELONG = np.long
  */
@@ -25690,7 +25690,7 @@ if (!__Pyx_RefNanny) {
 
   /* "computational_core.pyx":8
  * DTYPEBYTE = np.byte
- * DTYPEINT = np.int
+ * DTYPEINT = np.int6464
  * DTYPEINT64 = np.int64             # <<<<<<<<<<<<<<
  * DTYPELONG = np.long
  * DTYPEFLOAT32 = np.float32
@@ -25704,7 +25704,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "computational_core.pyx":9
- * DTYPEINT = np.int
+ * DTYPEINT = np.int6464
  * DTYPEINT64 = np.int64
  * DTYPELONG = np.long             # <<<<<<<<<<<<<<
  * DTYPEFLOAT32 = np.float32

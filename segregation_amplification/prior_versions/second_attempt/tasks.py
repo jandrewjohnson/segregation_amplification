@@ -200,7 +200,7 @@ def spatial_segregation_game(p):
         init = {'d': [-10, 10, -.5, 1], 's': [0, 1, .5, .1], 'r': [-10, 10, 1.0, 1]}
 
         # Keep track of all the agents via IDs
-        agent_ids = np.arange(0, n_agents).astype(np.int)
+        agent_ids = np.arange(0, n_agents).astype(np.int64)
 
 
         for name, animation_path in p.spatial_segregation_game_animation_paths.items():
@@ -235,11 +235,11 @@ def spatial_segregation_game(p):
             unoccupied_locations = shuffled_positional_indices[n_agents:]
 
             # Agent types are 1 = liberal, 2 = conservative. 0 is left blank to reflect absence of agents.
-            agent_types = np.random.randint(1, 3, size=n_agents).astype(np.int)
+            agent_types = np.random.randint(1, 3, size=n_agents).astype(np.int64)
 
             # agent ids and types are initialized as maps.
-            agent_ids_map = np.zeros((spatial_shape[0], spatial_shape[1]), dtype=np.int)
-            types_map = np.zeros((spatial_shape[0], spatial_shape[1]), dtype=np.int)
+            agent_ids_map = np.zeros((spatial_shape[0], spatial_shape[1]), dtype=np.int64)
+            types_map = np.zeros((spatial_shape[0], spatial_shape[1]), dtype=np.int64)
             for i in range(n_agents):
                 agent_ids_map[shuffled_positional_indices[i, 0], shuffled_positional_indices[i, 1]] = i
                 types_map[shuffled_positional_indices[i, 0], shuffled_positional_indices[i, 1]] = agent_types[i]
@@ -464,7 +464,7 @@ def combined_game_interactive_time_variant(p):
             mean_metric_map = np.zeros(spatial_shape).astype(np.float32)
 
             agent_ids, agent_locations, unoccupied_locations, agent_types, agent_ids_map, types_map, d, s, r = functions.initialize_agents(spatial_shape, proportion_filled, type_bias, params)
-            neighborhood_radius = np.int(neighborhood_radius)
+            neighborhood_radius = np.int64(neighborhood_radius)
 
             for i in range(n_iterations):
                 n_changed = computational_core.spatial_segregation_externality_game(
@@ -487,7 +487,7 @@ def combined_game_interactive_time_variant(p):
             masking_choice = np.zeros(spatial_shape).astype(np.float32)
             mean_metric_map = np.zeros(spatial_shape).astype(np.float32)
             agent_ids, agent_locations, unoccupied_locations, agent_types, agent_ids_map, types_map, d, s, r = initialize_agents(spatial_shape, proportion_filled, type_bias, params)
-            neighborhood_radius = np.int(neighborhood_radius)
+            neighborhood_radius = np.int64(neighborhood_radius)
             n_iterations = 150
             for i in range(n_iterations):
 
