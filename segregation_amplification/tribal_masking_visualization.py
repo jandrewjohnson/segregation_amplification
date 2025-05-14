@@ -180,7 +180,7 @@ def plot_combined_game_interactive_time_variant(a1, a2, a3, a4, spatial_shape, p
 
     def sliders_on_changed_just_masking_updates(val):
         # global a1
-        # START HERE, i made this code real ugly here because i couldn't get it to use an EXISTING solution rather than just reassigning randomly or keeping the prior.
+        # NOTE, i made this code real ugly here because i couldn't get it to use an EXISTING solution rather than just reassigning randomly or keeping the prior.
         params = {'d': [-10, 10, d_slider.val, dd_slider.val], 's': [0, 1, s_slider.val, sd_slider.val], 'r': [-10, 10, r_slider.val, rd_slider.val]}
         # params_init = {'d': [-10, 10, -.25, .0000001], 's': [0, 10, 1.0, .0000001], 'r': [-10, 10, 3.0, .0000001]}
         # d_init = params_init['d'][2]

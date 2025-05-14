@@ -104,7 +104,7 @@ def update_model_arrays(model, long n_iterations):
     cdef float sum_mismatch, mean_mismatch, sum_match, mean_match, sum_metric, mean_metric, n_in_neighborhood
     cdef float utility_from_masking, utility_from_not_masking, current_infection_probability
 
-    # This is all wrong. START HERE. should be initialized.
+    # This is all wrong.  should be initialized.
     cdef np.ndarray[np.int32_t, ndim=2] occupied_map = np.zeros([n_rows, n_cols], dtype=DTYPELONG)
     cdef np.ndarray[np.int32_t, ndim=2] unoccupied_map = np.zeros([n_rows, n_cols], dtype=DTYPELONG)
     cdef np.ndarray[np.float32_t, ndim=2] mean_similarity_metric_map = np.zeros([n_rows, n_cols], dtype=DTYPEFLOAT32)
