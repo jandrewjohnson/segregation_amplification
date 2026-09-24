@@ -15,48 +15,8 @@ ctypedef np.int64_t DTYPEINT64_t
 ctypedef np.float32_t DTYPEFLOAT32_t
 ctypedef np.float64_t DTYPEFLOAT64_t
 
-from libc.stdlib cimport rand, RAND_MAX
+from libc.stdlib cimport rand, srand, RAND_MAX
 cdef float RAND_MAX_float = <float>(RAND_MAX)
-
-@cython.cdivision(True)
-@cython.embedsignature(True)
-@cython.boundscheck(True)
-@cython.wraparound(True)
-cpdef float[::, ::1] spatial_externality_game(float[::, ::1] direct_benefit, float[::, ::1] social_benefit, float[::, ::1] reciprocal_response):
-    cdef long n_rows = direct_benefit.shape[0]
-    cdef long n_cols = direct_benefit.shape[1]
-    cdef long r, c, rd, cd
-    cdef float utility_from_masking, utility_from_not_masking
-
-    cdef float[::, ::1] output_array = np.empty([n_rows, n_cols], dtype=DTYPEFLOAT32)
-    cdef float[::, ::1] masking_choice = np.zeros([n_rows, n_cols], dtype=DTYPEFLOAT32)
-    cdef float[::, ::1] average_reciprocal_response_from_masking = np.zeros([n_rows, n_cols], dtype=DTYPEFLOAT32)
-    cdef float[::, ::1] average_reciprocal_response_from_not_masking = np.zeros([n_rows, n_cols], dtype=DTYPEFLOAT32)
-
-
-    for r in range(n_rows):
-        for c in range(n_cols):
-
-            output_array[r, c] = direct_benefit[r, c] + social_benefit[r, c] + reciprocal_response[r, c]
-
-            for rd in range(-1, 1):
-                for cd in range(-1, 1):
-                    # Possible optimization: remove testing for own cell by smartly building tuples of which to test. Might also be done when considering non d8 neighbors.
-
-                    if not (rd == 0 and cd == 0): # Make sure to not account for one's reciprocal response to themself.
-                        average_reciprocal_response_from_masking[r, c] += reciprocal_response[r + rd, c + cd]
-                        average_reciprocal_response_from_not_masking[r, c] += -1 * reciprocal_response[r + rd, c + cd]
-
-            average_reciprocal_response_from_masking[r, c] = average_reciprocal_response_from_masking[r, c] / 8.
-            utility_from_masking = direct_benefit[r, c] + social_benefit[r, c] * average_reciprocal_response_from_masking[r, c] # Note implicit masking_choice as * 1
-            utility_from_not_masking = -1 * direct_benefit[r, c] + social_benefit[r, c] * average_reciprocal_response_from_not_masking[r, c]
-
-            if utility_from_masking > utility_from_not_masking:
-                masking_choice[r, c] = 1
-            else:
-                masking_choice[r, c] = -1
-
-    return masking_choice
 
 @cython.cdivision(True)
 @cython.embedsignature(True)
@@ -121,6 +81,10 @@ def update_model_arrays(model, long n_iterations):
 
     cdef long n_changers = 0
 
+    # Seed C rand() (used for infection draws) deterministically from the model's seed and how far it has run.
+    srand(<unsigned int>((model.c_rand_seed + model.n_iterations_run) % 2147483647))
+    rng = model.rng
+
     n_in_neighborhood = <float> (neighborhood_radius * 2 + 1) ** 2 - 1
 
     for iteration_counter in range(n_iterations):
@@ -167,7 +131,7 @@ def update_model_arrays(model, long n_iterations):
 
             if decision_to_move == 1:
                 n_changers += 1
-                random_unoccupied_index = np.random.randint(0, n_unoccupied_cells)
+                random_unoccupied_index = rng.integers(0, n_unoccupied_cells)
 
                 new_r = unoccupied_locations[random_unoccupied_index, 0]
                 new_c = unoccupied_locations[random_unoccupied_index, 1]

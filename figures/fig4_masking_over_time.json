@@ -1,0 +1,60 @@
+{
+  "seed": 1,
+  "spatial_shape": [
+    150,
+    150
+  ],
+  "proportion_filled": 0.75,
+  "game_type": "move_if_too_many_dissimilar",
+  "params": {
+    "segregation_threshold": 0.55,
+    "neighborhood_radius": 3,
+    "infection_probability": 0.005,
+    "masking_efficacy": 0.55,
+    "infection_duration": 10,
+    "immunity_decay": 0.99,
+    "d": -0.25,
+    "dd": 1e-07,
+    "s": 1.0,
+    "sd": 1e-07,
+    "r": 3.0,
+    "rd": 1e-07,
+    "b": -0.1,
+    "bd": 1e-07
+  },
+  "iterations_plotted": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    20,
+    30,
+    50,
+    75,
+    100
+  ],
+  "colors": {
+    "Mask": "green",
+    "Vacant": "#ffffff",
+    "No mask": "purple"
+  },
+  "figure": "fig4_masking_over_time",
+  "environment": {
+    "segregation_amplification": "1.0.0",
+    "python": "3.13.12",
+    "numpy": "2.4.3",
+    "scipy": "1.17.1",
+    "matplotlib": "3.10.8"
+  }
+}

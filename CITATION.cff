@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the paper and this code."
+title: "segregation_amplification: an agent-based model of segregation and binary choices with externalities"
+version: 1.0.0
+license: MIT
+repository-code: "https://github.com/jandrewjohnson/segregation_amplification"
+authors:
+  - family-names: Johnson
+    given-names: Justin Andrew
+    email: jajohns@umn.edu
+    affiliation: "Department of Applied Economics, University of Minnesota, Twin Cities"
+  - family-names: Runge
+    given-names: Carlisle Ford
+    affiliation: "Department of Applied Economics and Law, University of Minnesota, Twin Cities"
+preferred-citation:
+  type: article
+  title: "Thomas Schelling's Political Economy: Polarized Communities and Amplified Division"
+  authors:
+    - family-names: Johnson
+      given-names: Justin Andrew
+    - family-names: Runge
+      given-names: Carlisle Ford
